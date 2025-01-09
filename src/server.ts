@@ -9,6 +9,7 @@ import {
   notFoundMiddleware,
   errorHandlerMiddleware,
 } from "./middlewares/errorMiddlewares.js";
+import prismaClient from "./config/prisma/client.js";
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -34,6 +35,7 @@ const startServer = async () => {
     app.listen(port, () => console.log(`server listening at port ${port}`));
   } catch (error) {
     console.log(error);
+    prismaClient.$disconnect();
     process.exit(1);
   }
 };
