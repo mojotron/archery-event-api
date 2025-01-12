@@ -1,4 +1,4 @@
-import CustomApiError from "./CustomApiError";
+import CustomApiError from "./CustomApiError.js";
 
 const defaultMessage = `Requested resources is not found.`;
 

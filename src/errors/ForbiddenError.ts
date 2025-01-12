@@ -1,4 +1,4 @@
-import CustomApiError from "./CustomApiError";
+import CustomApiError from "./CustomApiError.js";
 
 const defaultMessage = `Current user is not allowed to access resource.`;
 

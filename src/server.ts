@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 //
 import routes from "./routes/index.js";
 import {
@@ -22,6 +23,7 @@ const app = express();
 app.use(helmet());
 app.use(limiter);
 app.use(cors());
+app.use(cookieParser());
 // body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

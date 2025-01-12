@@ -1,54 +1,69 @@
 import { body, check } from "express-validator";
 
-const emailValidation = body("email")
-  .trim()
-  .notEmpty()
-  .withMessage(`email field is empty`)
-  .isString()
-  .withMessage(`email field must be string of characters`)
-  .isEmail()
-  .withMessage(`email is invalid`)
-  .normalizeEmail()
-  .escape();
-
-const passwordValidation = body("password")
-  .trim()
-  .notEmpty()
-  .withMessage("password must not be empty")
-  .matches(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,}$/)
-  .withMessage(
-    `password must be be minimum of 8 character and including uppercase letter, lowercase letter, number and special character @$!%*?&`
-  )
-  .escape();
-
-const signupValidator = [
-  body("username")
+const nameValidation = (
+  input: string,
+  label: string,
+  min: number = 3,
+  max: number = 30
+) => {
+  return body(input)
     .trim()
     .notEmpty()
-    .withMessage(`username field is empty`)
+    .withMessage(`${label} field is empty`)
     .isString()
-    .withMessage(`username field must be string of characters`)
-    .isLength({ min: 3, max: 10 })
-    .withMessage(`username length must be between`)
+    .withMessage(`${label} field must be string of characters`)
+    .isLength({ min, max })
+    .withMessage(`${label} length must be between ${min} and ${max} characters`)
     .matches(/^$/)
-    .withMessage(`username accepts`)
-    .escape(),
+    .withMessage(`${label} accepts`)
+    .escape();
+};
 
-  emailValidation,
-
-  passwordValidation,
-
-  check("confirmPassword")
+const emailValidation = () => {
+  return body("email")
     .trim()
+    .notEmpty()
+    .withMessage(`email field is empty`)
+    .isString()
+    .withMessage(`email field must be string of characters`)
+    .isEmail()
+    .withMessage(`email is invalid`)
+    .normalizeEmail()
+    .escape();
+};
+
+const passwordValidation = () => {
+  return body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("password must not be empty")
+    .matches(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,}$/)
+    .withMessage(
+      `password must be be minimum of 8 character and including uppercase letter, lowercase letter, number and special character @$!%*?&`
+    )
+    .escape();
+};
+
+const confirmPasswordValidation = () => {
+  return check("confirmPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("confirm password filed must be filled")
     .custom((confirmPassword, { req }) => {
       const password = req.body.password;
       if (password !== confirmPassword) return false;
       return true;
     })
     .withMessage(`password and confirm password not matching`)
-    .escape(),
+    .escape();
+};
+
+const signupValidator = [
+  nameValidation("firstName", "first name"),
+  nameValidation("lastName", "last name"),
+  emailValidation(),
+  passwordValidation(),
+  confirmPasswordValidation(),
 ];
 
-const loginValidator = [];
-
-export { signupValidator, loginValidator };
+export { signupValidator };

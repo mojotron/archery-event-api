@@ -1,4 +1,4 @@
-import CustomApiError from "./CustomApiError";
+import CustomApiError from "./CustomApiError.js";
 
 const defaultMessage = `Client input fails validation.`;
 
