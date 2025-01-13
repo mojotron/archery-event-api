@@ -1,4 +1,4 @@
-import { body, check } from "express-validator";
+import { ValidationChain, body, check } from "express-validator";
 
 const nameValidation = (
   input: string,
@@ -13,9 +13,13 @@ const nameValidation = (
     .isString()
     .withMessage(`${label} field must be string of characters`)
     .isLength({ min, max })
-    .withMessage(`${label} length must be between ${min} and ${max} characters`)
-    .matches(/^$/)
-    .withMessage(`${label} accepts`)
+    .withMessage(
+      `${label} field length must be between ${min} and ${max} characters`
+    )
+    .matches(/^[A-Za-zćĆčČđĐ0-9\-\_]+$/)
+    .withMessage(
+      `${label} field accepts letters, numbers dash(-) and underscore(_) characters`
+    )
     .escape();
 };
 
@@ -27,7 +31,7 @@ const emailValidation = () => {
     .isString()
     .withMessage(`email field must be string of characters`)
     .isEmail()
-    .withMessage(`email is invalid`)
+    .withMessage(`email format is invalid`)
     .normalizeEmail()
     .escape();
 };
@@ -37,6 +41,8 @@ const passwordValidation = () => {
     .trim()
     .notEmpty()
     .withMessage("password must not be empty")
+    .isString()
+    .withMessage(`password field must be string of characters`)
     .matches(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,}$/)
     .withMessage(
       `password must be be minimum of 8 character and including uppercase letter, lowercase letter, number and special character @$!%*?&`
@@ -58,7 +64,7 @@ const confirmPasswordValidation = () => {
     .escape();
 };
 
-const signupValidator = [
+const signupValidator: ValidationChain[] = [
   nameValidation("firstName", "first name"),
   nameValidation("lastName", "last name"),
   emailValidation(),

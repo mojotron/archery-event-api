@@ -1,35 +1,40 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  FieldValidationError,
-  ValidationError,
-  validationResult,
-} from "express-validator";
+import { FieldValidationError, validationResult } from "express-validator";
+import type { JsonResponseValidationError } from "../types/JsonResponseTypes";
 
-const formatErrorMessages = (errors: ValidationError[]) => {
-  const errorsObject: { [key: string]: string[] } = {};
-
-  errors.forEach((error) => {
-    const err = error as FieldValidationError;
-    if (errorsObject[err.path]) {
-      errorsObject[err.path]?.push(err.msg);
-    } else {
-      errorsObject[err.path] = [err.msg];
-    }
-  });
-
-  return errorsObject;
-};
-
-const signupValidationMiddleware = (
+const validationMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const result = validationResult(req);
 
-  const errors = formatErrorMessages(result.array());
-  console.log(errors);
-  next();
+  if (result.isEmpty()) {
+    // data is validated and correct, go to next middleware in cain
+    next();
+  }
+
+  const inputErrors: { [key: string]: string[] } = {};
+
+  result.array().forEach((error) => {
+    const err = error as FieldValidationError;
+    const path = err.path;
+
+    if (inputErrors[path]) {
+      inputErrors[path]?.push(err.msg);
+    } else {
+      inputErrors[path] = [err.msg];
+    }
+  });
+
+  const responseJson: JsonResponseValidationError = {
+    status: "validation-error",
+    message: "incorrect input filed data",
+    inputErrors,
+  };
+
+  res.status(409).json(responseJson);
+  return;
 };
 
-export { signupValidationMiddleware };
+export default validationMiddleware;
