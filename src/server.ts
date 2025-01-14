@@ -11,13 +11,14 @@ import {
   errorHandlerMiddleware,
 } from "./middlewares/errorMiddlewares.js";
 import prismaClient from "./config/prisma/client.js";
+// constants
+import { PORT } from "./constants/env.js";
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 50,
 });
 
-const port = process.env.PORT;
 const app = express();
 //
 app.use(helmet());
@@ -34,7 +35,7 @@ app.use(errorHandlerMiddleware);
 
 const startServer = async () => {
   try {
-    app.listen(port, () => console.log(`server listening at port ${port}`));
+    app.listen(PORT, () => console.log(`server listening at PORT ${PORT}`));
   } catch (error) {
     console.log(error);
     prismaClient.$disconnect();
