@@ -10,9 +10,9 @@ import {
   notFoundMiddleware,
   errorHandlerMiddleware,
 } from "./middlewares/errorMiddlewares.js";
-import prismaClient from "./config/prisma/client.js";
+import prisma from "./config/prisma.js";
 // constants
-import { PORT } from "./constants/env.js";
+import { PORT, APP_ORIGIN_ADMIN } from "./constants/env.js";
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -23,14 +23,20 @@ const app = express();
 //
 app.use(helmet());
 app.use(limiter);
-app.use(cors());
+app.use(
+  cors({
+    origin: APP_ORIGIN_ADMIN,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 // body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // routes
 app.use(routes);
-app.use(notFoundMiddleware);
+// app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 const startServer = async () => {
@@ -38,7 +44,7 @@ const startServer = async () => {
     app.listen(PORT, () => console.log(`server listening at PORT ${PORT}`));
   } catch (error) {
     console.log(error);
-    prismaClient.$disconnect();
+    prisma.$disconnect();
     process.exit(1);
   }
 };
