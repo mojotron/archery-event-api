@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const nameSchema = z.string();
+
 export const registerSchema = z
   .object({
     firstName: z.string(),

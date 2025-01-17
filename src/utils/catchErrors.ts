@@ -10,7 +10,7 @@ const catchErrors =
   (controller: AsyncController): AsyncController =>
   async (req, res, next) => {
     try {
-      controller(req, res, next);
+      await controller(req, res, next);
     } catch (error) {
       next(error);
     }

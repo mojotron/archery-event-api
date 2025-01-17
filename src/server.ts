@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // routes
 app.use(routes);
-// app.use(notFoundMiddleware);
+app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 const startServer = async () => {
