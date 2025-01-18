@@ -5,6 +5,7 @@ import { CREATED } from "../constants/http.js";
 import { registerSchema } from "./authSchemas.js";
 // auth service
 import { createAccount } from "../services/authService.js";
+import { setAuthCookies } from "../utils/cookies.js";
 
 // handlers
 // 1. validate request
@@ -18,9 +19,13 @@ const registerHandler = catchErrors(
       userAgent: req.headers["user-agent"],
     });
 
-    await createAccount(request);
+    const { user, accessToken, refreshToken } = await createAccount(request);
 
-    res.status(CREATED).json(request);
+    console.log("YO");
+
+    return setAuthCookies({ res, accessToken, refreshToken })
+      .status(CREATED)
+      .json(user);
   }
 );
 

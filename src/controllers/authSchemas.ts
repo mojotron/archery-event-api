@@ -6,17 +6,15 @@ export const registerSchema = z
   .object({
     firstName: z.string(),
     lastName: z.string(),
-    email: z.string(),
+    email: z.string().email(),
     password: z.string(),
     confirmPassword: z.string(),
     userAgent: z.string().optional(),
   })
-  .refine(
-    (data) => {
-      data.password === data.confirmPassword;
-    },
-    { message: "Passwords do not match", path: ["confirmPassword"] }
-  );
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 // .refine(
 //   (data) =>
 //     data.password.match(
