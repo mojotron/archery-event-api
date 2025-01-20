@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import catchErrors from "../utils/catchErrors.js";
 import { CREATED } from "../constants/http.js";
 // validation schema
-import { registerSchema } from "./authSchemas.js";
+import { loginSchema, registerSchema } from "./authSchemas.js";
 // auth service
-import { createAccount } from "../services/authService.js";
+import { createAccount, loginUser } from "../services/authService.js";
 import { setAuthCookies } from "../utils/cookies.js";
 
 // handlers
@@ -27,4 +27,12 @@ const registerHandler = catchErrors(
   }
 );
 
-export { registerHandler };
+const loginHandler = catchErrors(async (req: Request, res: Response) => {
+  const request = loginSchema.parse({
+    ...req.body,
+    userAgent: req.headers["user-agent"],
+  });
+  await loginUser(request);
+});
+
+export { registerHandler, loginHandler };

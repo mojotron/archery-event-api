@@ -71,3 +71,17 @@ export const createAccount = async (data: CreateAccountParams) => {
   // return user and tokens
   return { user: newUser, accessToken, refreshToken };
 };
+
+export type LoginUserParams = {
+  email: string;
+  password: string;
+  userAgent?: string | undefined;
+};
+
+export const loginUser = async (data: LoginUserParams) => {
+  // verify user (exists)
+  // validate passwords
+  // create session
+  // create tokens
+  // return user and tokens
+};
