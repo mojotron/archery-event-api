@@ -35,7 +35,7 @@ model Session {
   userAgent String?
 
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId String
 }
 
 model VerificationCode {
@@ -46,7 +46,7 @@ model VerificationCode {
   expiresAt DateTime
 
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId String
 }
 
 enum Role {

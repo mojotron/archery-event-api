@@ -1,10 +1,11 @@
 import prisma from "../config/prisma.js";
 import jwt from "jsonwebtoken";
-import { hashPassword } from "../utils/bcrypt.js";
+import { comparePasswords, hashPassword } from "../utils/bcrypt.js";
 import appAssert from "../utils/appAssert.js";
 import { oneYearFromNow, thirtyDaysFromNow } from "../utils/date.js";
 import { JWT_REFRESH_SECRET, JWT_ACCESS_SECRET } from "../constants/env.js";
-import { CONFLICT } from "../constants/http.js";
+import { CONFLICT, UNAUTHORIZED } from "../constants/http.js";
+import { NOTFOUND } from "node:dns";
 
 export type CreateAccountParams = {
   firstName: string;
@@ -80,8 +81,40 @@ export type LoginUserParams = {
 
 export const loginUser = async (data: LoginUserParams) => {
   // verify user (exists)
+  const user = await prisma.user.findUnique({ where: { email: data.email } });
+  appAssert(user, UNAUTHORIZED, "User email or password invalid");
   // validate passwords
+  const correctPassword = await comparePasswords(data.password, user.password);
+  appAssert(correctPassword, UNAUTHORIZED, "User email or password invalid");
   // create session
+  const session = await prisma.session.create({
+    data: {
+      userId: user.id,
+      expiresAt: thirtyDaysFromNow(),
+      userAgent: data.userAgent,
+    },
+  });
   // create tokens
+  const accessToken = jwt.sign(
+    { userId: user.id, sessionId: session.id },
+    JWT_ACCESS_SECRET,
+    { audience: ["user"], expiresIn: "15m" }
+  );
+  const refreshToken = jwt.sign({ sessionId: session.id }, JWT_REFRESH_SECRET, {
+    audience: ["user"],
+    expiresIn: "30d",
+  });
   // return user and tokens
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      verified: user.verified,
+      role: user.role,
+    },
+    accessToken,
+    refreshToken,
+  };
 };

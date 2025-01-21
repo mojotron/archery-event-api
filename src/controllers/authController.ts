@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import catchErrors from "../utils/catchErrors.js";
-import { CREATED } from "../constants/http.js";
+import { CREATED, OK } from "../constants/http.js";
 // validation schema
 import { loginSchema, registerSchema } from "./authSchemas.js";
 // auth service
@@ -32,7 +32,11 @@ const loginHandler = catchErrors(async (req: Request, res: Response) => {
     ...req.body,
     userAgent: req.headers["user-agent"],
   });
-  await loginUser(request);
+  const { accessToken, refreshToken } = await loginUser(request);
+
+  return setAuthCookies({ res, accessToken, refreshToken })
+    .status(OK)
+    .json({ message: "user login successful" });
 });
 
 export { registerHandler, loginHandler };
