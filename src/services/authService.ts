@@ -5,7 +5,7 @@ import appAssert from "../utils/appAssert.js";
 import { oneYearFromNow, thirtyDaysFromNow } from "../utils/date.js";
 import { JWT_REFRESH_SECRET, JWT_ACCESS_SECRET } from "../constants/env.js";
 import { CONFLICT, UNAUTHORIZED } from "../constants/http.js";
-import { NOTFOUND } from "node:dns";
+import { refreshTokenSignOptions, signToken } from "../utils/jwt.js";
 
 export type CreateAccountParams = {
   firstName: string;
@@ -57,18 +57,12 @@ export const createAccount = async (data: CreateAccountParams) => {
     },
   });
   // sign access and refresh tokens
-  const refreshToken = jwt.sign({ sessionId: session.id }, JWT_REFRESH_SECRET, {
-    expiresIn: "30d",
-    audience: ["user"],
-  });
-  const accessToken = jwt.sign(
-    { userId: newUser.id, sessionId: session.id },
-    JWT_ACCESS_SECRET,
-    {
-      expiresIn: "15m",
-      audience: ["user"],
-    }
+  const refreshToken = signToken(
+    { sessionId: session.id },
+    refreshTokenSignOptions
   );
+
+  const accessToken = signToken({ userId: newUser.id, sessionId: session.id });
   // return user and tokens
   return { user: newUser, accessToken, refreshToken };
 };
@@ -95,15 +89,11 @@ export const loginUser = async (data: LoginUserParams) => {
     },
   });
   // create tokens
-  const accessToken = jwt.sign(
-    { userId: user.id, sessionId: session.id },
-    JWT_ACCESS_SECRET,
-    { audience: ["user"], expiresIn: "15m" }
+  const accessToken = signToken({ userId: user.id, sessionId: session.id });
+  const refreshToken = signToken(
+    { sessionId: session.id },
+    refreshTokenSignOptions
   );
-  const refreshToken = jwt.sign({ sessionId: session.id }, JWT_REFRESH_SECRET, {
-    audience: ["user"],
-    expiresIn: "30d",
-  });
   // return user and tokens
   return {
     user: {
