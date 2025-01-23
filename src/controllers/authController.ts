@@ -39,4 +39,6 @@ const loginHandler = catchErrors(async (req: Request, res: Response) => {
     .json({ message: "user login successful" });
 });
 
-export { registerHandler, loginHandler };
+const logoutHandler = catchErrors(async (req: Request, res: Response) => {});
+
+export { registerHandler, loginHandler, logoutHandler };
