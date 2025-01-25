@@ -5,6 +5,9 @@ import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date.js";
 const secureOption = NODE_ENV !== "development";
 export const REFRESH_PATH = `/api/v1/auth/refresh`;
 
+const ACCESS_TOKEN_NAME = "";
+const REFRESH_TOKEN_NAME = "";
+
 const cookieDefaults: CookieOptions = {
   sameSite: "strict",
   httpOnly: true,
@@ -35,4 +38,8 @@ export const setAuthCookies = ({ res, accessToken, refreshToken }: Params) => {
       refreshToken,
       getRefreshTokenCookieOptions()
     );
+};
+
+export const clearAuthCookies = (res: Response) => {
+  return res.clearCookie("").clearCookie("", { path: REFRESH_PATH });
 };
