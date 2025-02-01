@@ -1,5 +1,5 @@
 import jwt, { SignOptions } from "jsonwebtoken";
-import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from "../constants/env";
+import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from "../constants/env.js";
 
 export type AccessTokenPayload = {
   userId: string; // prisma user record id
