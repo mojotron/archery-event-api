@@ -1,4 +1,5 @@
 const enum AppErrorCode {
+  FormInputError = "FormInputError",
   InvalidAccessToken = "InvalidAccessToken",
 }
 

@@ -6,6 +6,7 @@ import {
   NOT_FOUND,
 } from "../constants/http.js";
 import AppError from "../utils/AppError.js";
+import AppErrorCode from "../constants/appErrorCode.js";
 
 const notFoundMiddleware: RequestHandler = (req, res, next) => {
   res
@@ -20,7 +21,13 @@ const handleZodError = (res: Response, error: z.ZodError) => {
     message: err.message,
   }));
 
-  return res.status(BAD_REQUEST).json({ message: error.message, errors });
+  return res
+    .status(BAD_REQUEST)
+    .json({
+      message: error.message,
+      errors,
+      errorCode: AppErrorCode.FormInputError,
+    });
 };
 
 const handleAppError = (res: Response, error: AppError) => {
