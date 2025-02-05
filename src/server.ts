@@ -5,14 +5,6 @@ import { rateLimit } from "express-rate-limit";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 //
-import routes from "./routes/index.js";
-import {
-  notFoundMiddleware,
-  errorHandlerMiddleware,
-} from "./middlewares/errorMiddlewares.js";
-import prisma from "./config/prisma.js";
-// constants
-import { PORT, APP_ORIGIN_ADMIN } from "./constants/env.js";
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
