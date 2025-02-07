@@ -26,3 +26,5 @@ export const registerSchema = z
     message: `passwords and confirm password do not match`,
     path: ["confirmPassword"],
   });
+
+export const verificationCodeSchema = z.string().length(36).trim();

@@ -9,3 +9,5 @@ const getEnv = (key: string) => {
 export const PORT = getEnv("PORT");
 export const NODE_ENV = getEnv("NODE_ENV");
 export const RESEND_API_KEY = getEnv("RESEND_API_KEY");
+export const EMAIL_SENDER = getEnv("EMAIL_SENDER");
+export const APP_ORIGIN_CLIENT = getEnv("APP_ORIGIN_CLIENT");
