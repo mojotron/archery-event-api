@@ -1,0 +1,19 @@
+import jwt from "jsonwebtoken";
+import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from "../constants/env.js";
+
+export type AccessTokenPayload = {
+  userId: string;
+  sessionId: string;
+};
+
+export type RefreshTokenPayload = {
+  sessionId: string;
+};
+
+export const signAccessToken = (payload: AccessTokenPayload) => {
+  return jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: "15m" });
+};
+
+export const signRefreshToken = (payload: RefreshTokenPayload) => {
+  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: "30d" });
+};

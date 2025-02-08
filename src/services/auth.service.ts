@@ -3,14 +3,15 @@ import {
   CONFLICT,
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
+  UNAUTHORIZED,
 } from "../constants/http.js";
 import appAsserts from "../utils/appAssert.js";
 import { thirtyDaysFromNow } from "../utils/date.js";
 import sendMail from "../utils/sendMail.js";
 import { getVerifyEmailTemplate } from "../utils/emailTemplates.js";
 import { APP_ORIGIN_CLIENT } from "../constants/env.js";
-import { hashPassword } from "../utils/bcrypt.js";
-import { date } from "zod";
+import { comparePasswords, hashPassword } from "../utils/bcrypt.js";
+import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
 
 type CreateAccountParams = {
   firstName: string;
@@ -19,19 +20,24 @@ type CreateAccountParams = {
   password: string;
 };
 
-export const createAccount = async (data: CreateAccountParams) => {
+export const createAccount = async ({
+  firstName,
+  lastName,
+  email,
+  password,
+}: CreateAccountParams) => {
   // check is user exist with given email
   const userExist = await prisma.user.findUnique({
-    where: { email: data.email },
+    where: { email: email },
   });
   appAsserts(!userExist, CONFLICT, "email already in use");
   // create user
-  const hashedPassword = await hashPassword(data.password);
+  const hashedPassword = await hashPassword(password);
   const user = await prisma.user.create({
     data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
+      firstName,
+      lastName,
+      email,
       password: hashedPassword,
     },
   });
@@ -83,5 +89,45 @@ export const verifyEmail = async (code: string) => {
 
   return {
     user: { id: updatedUser.id },
+  };
+};
+
+type LoginUserParams = {
+  email: string;
+  password: string;
+  userAgent?: string;
+};
+
+export const loginUser = async ({
+  email,
+  password,
+  userAgent,
+}: LoginUserParams) => {
+  // get user
+  const user = await prisma.user.findUnique({ where: { email } });
+  appAsserts(user, UNAUTHORIZED, "Invalid email or password");
+  // check password
+  const isValidPassword = await comparePasswords(password, user.password);
+  appAsserts(isValidPassword, UNAUTHORIZED, "Invalid email or password");
+  // check if user has verified email
+  appAsserts(user.isVerified, UNAUTHORIZED, "Email not verified");
+  // create session
+  const session = await prisma.session.create({
+    data: {
+      userId: user.id,
+      userAgent,
+      expiresAt: thirtyDaysFromNow(),
+    },
+  });
+  // sign jwt tokens
+  const userId = user.id;
+  const sessionId = session.id;
+  const accessToken = signAccessToken({ userId, sessionId });
+  const refreshToken = signRefreshToken({ sessionId });
+  // return user and tokens
+  return {
+    user: { userId },
+    accessToken,
+    refreshToken,
   };
 };

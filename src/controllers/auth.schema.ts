@@ -28,3 +28,9 @@ export const registerSchema = z
   });
 
 export const verificationCodeSchema = z.string().length(36).trim();
+
+export const loginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  userAgent: z.string().optional(),
+});
