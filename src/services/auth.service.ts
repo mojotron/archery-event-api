@@ -173,3 +173,17 @@ export const refreshAccessToken = async (refreshToken: string) => {
     newRefreshToken,
   };
 };
+
+export const sendPasswordResetEmail = async (email: string) => {
+  // catch errors to prevent leaking user data to client, always return success
+  try {
+    // get user
+    // allow only to reset request per 5 min
+    // create verification code
+    // send email
+    // return url and email id
+  } catch (error: any) {
+    console.log(`SendPasswordResetError: ${error.message}`);
+    return {};
+  }
+};

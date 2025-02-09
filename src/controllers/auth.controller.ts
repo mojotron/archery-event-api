@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors.js";
 import {
+  emailSchema,
   loginSchema,
   registerSchema,
   verificationCodeSchema,
@@ -10,6 +11,7 @@ import {
   verifyEmail,
   loginUser,
   refreshAccessToken,
+  sendPasswordResetEmail,
 } from "../services/auth.service.js";
 import { CREATED, OK, UNAUTHORIZED } from "../constants/http.js";
 import {
@@ -104,4 +106,16 @@ export const refreshHandler = catchErrors(
       .status(OK)
       .json({ message: "Access token refresh successful" });
   }
+);
+
+export const sendPasswordResetHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const email = emailSchema.parse(req.body.email);
+
+    await sendPasswordResetEmail(email);
+  }
+);
+
+export const resetPasswordHandler = catchErrors(
+  async (req: Request, res: Response) => {}
 );
