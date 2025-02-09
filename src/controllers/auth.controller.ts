@@ -9,9 +9,20 @@ import {
   createAccount,
   verifyEmail,
   loginUser,
+  refreshAccessToken,
 } from "../services/auth.service.js";
-import { CREATED, OK } from "../constants/http.js";
-import { setAuthCookies } from "../utils/cookies.js";
+import { CREATED, OK, UNAUTHORIZED } from "../constants/http.js";
+import {
+  ACCESS_COOKIE_NAME,
+  REFRESH_COOKIE_NAME,
+  clearAuthCookies,
+  getAccessTokenCookieOptions,
+  getRefreshTokenCookieOptions,
+  setAuthCookies,
+} from "../utils/cookies.js";
+import { AccessTokenPayload, verifyToken } from "../utils/jwt.js";
+import prisma from "../config/prisma.js";
+import appAsserts from "../utils/appAssert.js";
 
 export const registerHandler = catchErrors(
   async (req: Request, res: Response) => {
@@ -49,3 +60,48 @@ export const loginHandler = catchErrors(async (req: Request, res: Response) => {
     .status(OK)
     .json({ message: "user login successful" });
 });
+
+export const logoutHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const accessToken = req.cookies[ACCESS_COOKIE_NAME] as string | undefined;
+
+    const { payload } = verifyToken<AccessTokenPayload>(
+      accessToken || "",
+      "access"
+    );
+
+    if (payload) {
+      await prisma.session.delete({ where: { id: payload.sessionId } });
+    }
+
+    return clearAuthCookies(res)
+      .status(OK)
+      .json({ message: "User logout successful" });
+  }
+);
+
+export const refreshHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const refreshToken = req.cookies[REFRESH_COOKIE_NAME] as string | undefined;
+    console.log(refreshToken);
+
+    appAsserts(refreshToken, UNAUTHORIZED, "Missing refresh token");
+
+    const { accessToken, newRefreshToken } = await refreshAccessToken(
+      refreshToken
+    );
+
+    if (newRefreshToken) {
+      res.cookie(
+        REFRESH_COOKIE_NAME,
+        newRefreshToken,
+        getRefreshTokenCookieOptions()
+      );
+    }
+
+    return res
+      .cookie(ACCESS_COOKIE_NAME, accessToken, getAccessTokenCookieOptions())
+      .status(OK)
+      .json({ message: "Access token refresh successful" });
+  }
+);

@@ -4,10 +4,12 @@ import prisma from "./config/prisma.js";
 import { PORT, NODE_ENV } from "./constants/env.js";
 import routes from "./routes/index.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use("/api/v1", routes);
 app.use(errorHandler);

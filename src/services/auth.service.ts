@@ -6,12 +6,17 @@ import {
   UNAUTHORIZED,
 } from "../constants/http.js";
 import appAsserts from "../utils/appAssert.js";
-import { thirtyDaysFromNow } from "../utils/date.js";
+import { thirtyDaysFromNow, ONE_DAY_MS } from "../utils/date.js";
 import sendMail from "../utils/sendMail.js";
 import { getVerifyEmailTemplate } from "../utils/emailTemplates.js";
 import { APP_ORIGIN_CLIENT } from "../constants/env.js";
 import { comparePasswords, hashPassword } from "../utils/bcrypt.js";
-import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
+import {
+  RefreshTokenPayload,
+  signAccessToken,
+  signRefreshToken,
+  verifyToken,
+} from "../utils/jwt.js";
 
 type CreateAccountParams = {
   firstName: string;
@@ -129,5 +134,42 @@ export const loginUser = async ({
     user: { userId },
     accessToken,
     refreshToken,
+  };
+};
+
+export const refreshAccessToken = async (refreshToken: string) => {
+  // verify refresh token
+  const { payload } = verifyToken<RefreshTokenPayload>(refreshToken, "refresh");
+  appAsserts(payload, UNAUTHORIZED, "Invalid refresh token");
+  // get user session
+  const session = await prisma.session.findUnique({
+    where: { id: payload.sessionId },
+  });
+  const now = Date.now();
+  appAsserts(
+    session && session.expiresAt.getTime() > now,
+    UNAUTHORIZED,
+    "Session expired"
+  );
+  // refresh session is expires in next 24 hour
+  const sessionNeedsRefresh = session.expiresAt.getTime() - now <= ONE_DAY_MS;
+  if (sessionNeedsRefresh) {
+    await prisma.session.update({
+      where: { id: session.id },
+      data: { expiresAt: thirtyDaysFromNow() },
+    });
+  }
+  const newRefreshToken = sessionNeedsRefresh
+    ? signRefreshToken({ sessionId: session.id })
+    : undefined;
+  // sign access token
+  const accessToken = signAccessToken({
+    userId: session.userId,
+    sessionId: session.id,
+  });
+  // return tokens
+  return {
+    accessToken,
+    newRefreshToken,
   };
 };
