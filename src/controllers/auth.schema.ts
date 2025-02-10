@@ -34,3 +34,8 @@ export const loginSchema = z.object({
   password: passwordSchema,
   userAgent: z.string().optional(),
 });
+
+export const resetPasswordSchema = z.object({
+  password: passwordSchema,
+  verificationCode: verificationCodeSchema,
+});
