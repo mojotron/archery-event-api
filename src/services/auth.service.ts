@@ -273,6 +273,23 @@ export const resetPassword = async ({
   // delete verification
   await prisma.verificationCode.delete({ where: { id: verification.id } });
   // return user
+  // check if user is verified and update if not
+  if (updatedUser.isVerified === false) {
+    await prisma.user.update({
+      where: { id: updatedUser.id },
+      data: { isVerified: true },
+    });
+    // clean verification from db
+    const emailVerification = await prisma.verificationCode.findFirst({
+      where: { userId: updatedUser.id, type: "EmailVerification" },
+    });
+    if (emailVerification) {
+      await prisma.verificationCode.delete({
+        where: { id: emailVerification.id },
+      });
+    }
+  }
+
   return {
     user: { userId: updatedUser.id },
   };

@@ -87,7 +87,6 @@ export const logoutHandler = catchErrors(
 export const refreshHandler = catchErrors(
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies[REFRESH_COOKIE_NAME] as string | undefined;
-    console.log(refreshToken);
 
     appAsserts(refreshToken, UNAUTHORIZED, "Missing refresh token");
 
@@ -123,7 +122,6 @@ export const sendPasswordResetHandler = catchErrors(
 export const resetPasswordHandler = catchErrors(
   async (req: Request, res: Response) => {
     const request = resetPasswordSchema.parse({ ...req.body });
-    console.log(request);
 
     await resetPassword(request);
 

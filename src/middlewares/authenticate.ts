@@ -1,4 +1,4 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
 import { ACCESS_COOKIE_NAME } from "../utils/cookies.js";
 import appAsserts from "../utils/appAssert.js";
 import { UNAUTHORIZED } from "../constants/http.js";

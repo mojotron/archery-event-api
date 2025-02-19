@@ -17,8 +17,6 @@ export const getSessionsHandler = catchErrors(
 
 export const deleteSessionHandler = catchErrors(
   async (req: Request, res: Response) => {
-    console.log(req.body);
-
     const sessionId = sessionSchema.parse(req.params.sessionId);
 
     await deleteSession({ sessionId, userId: req.userId });

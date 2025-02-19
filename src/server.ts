@@ -1,7 +1,12 @@
 import "dotenv/config";
 import express from "express";
 import prisma from "./config/prisma.js";
-import { PORT, NODE_ENV, APP_ORIGIN_CLIENT } from "./constants/env.js";
+import {
+  PORT,
+  NODE_ENV,
+  APP_ORIGIN_CLIENT,
+  APP_ORIGIN_ADMIN,
+} from "./constants/env.js";
 import routes from "./routes/index.routes.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import cookieParser from "cookie-parser";
@@ -12,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: [APP_ORIGIN_CLIENT],
+    origin: [APP_ORIGIN_CLIENT, APP_ORIGIN_ADMIN],
     credentials: true,
   })
 );
