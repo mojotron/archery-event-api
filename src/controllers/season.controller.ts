@@ -6,10 +6,14 @@ import { createSeason } from "../services/season.service.js";
 
 export const createSeasonHandler = catchErrors(
   async (req: Request, res: Response) => {
+    console.log(req.body);
+
     const request = createSeasonSchema.parse({ ...req.body });
 
-    await createSeason();
+    const { season } = await createSeason({ ...request, userId: req.userId });
 
-    return res.status(OK);
+    return res
+      .status(OK)
+      .json({ message: `${season.title} season created`, season });
   }
 );
