@@ -25,7 +25,7 @@ export const createSeason = async ({
       description,
       type,
       tournamentCount,
-      userId,
+      createdById: userId,
     },
   });
   appAsserts(
@@ -58,11 +58,59 @@ export const getSeasonById = async (seasonId: string) => {
   return { season };
 };
 
-export const deleteSeason = async (seasonId: string) => {
-  const season = await prisma.season.delete({ where: { id: seasonId } });
+export const deleteSeason = async (seasonId: string, userId: string) => {
+  const season = await prisma.season.findUnique({
+    where: { id: seasonId, createdById: userId },
+  });
   appAsserts(season, NOT_FOUND, "season not found");
 
-  return { season };
+  const deletedSeason = await prisma.season.delete({
+    where: { id: season.id },
+  });
+  appAsserts(
+    deleteSeason,
+    INTERNAL_SERVER_ERROR,
+    "deleting season failed, please try again later"
+  );
+  return { season: deletedSeason };
 };
 
-export const updateSeason = async () => {};
+type UpdateSeasonParams = {
+  seasonId: string;
+  userId: string;
+  title?: string;
+  description?: string;
+  tournamentCount?: number;
+  isFinished?: boolean;
+};
+
+export const updateSeason = async ({
+  seasonId,
+  userId,
+  title,
+  description,
+  tournamentCount,
+  isFinished,
+}: UpdateSeasonParams) => {
+  const season = await prisma.season.findUnique({
+    where: { id: seasonId, createdById: userId },
+  });
+  appAsserts(season, NOT_FOUND, "season not found");
+  const updatedSeason = await prisma.season.update({
+    where: { id: season.id },
+    data: {
+      ...(title !== undefined && { title }),
+      ...(description !== undefined && { description }),
+      ...(tournamentCount !== undefined && { tournamentCount }),
+      ...(isFinished !== undefined && { isFinished }),
+    },
+  });
+  appAsserts(
+    updatedSeason,
+    INTERNAL_SERVER_ERROR,
+    "updating season failed, please try again later"
+  );
+  return {
+    season: updatedSeason,
+  };
+};

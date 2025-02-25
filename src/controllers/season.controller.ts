@@ -4,12 +4,15 @@ import {
   seasonFilterSchema,
   seasonIdSchema,
   seasonSchema,
+  updateSeasonSchema,
 } from "./season.schema.js";
 import { OK } from "../constants/http.js";
 import {
   createSeason,
   getSeasons,
   getSeasonById,
+  deleteSeason,
+  updateSeason,
 } from "../services/season.service.js";
 
 // READ SEASONS
@@ -48,9 +51,24 @@ export const createSeasonHandler = catchErrors(
 );
 // DELETE
 export const deleteSeasonHandler = catchErrors(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    const seasonId = seasonIdSchema.parse(req.params.seasonId);
+
+    const { season } = await deleteSeason(seasonId, req.userId);
+
+    return res.status(OK).json({ message: `season deleted`, season });
+  }
 );
 // UPDATE
 export const updateSeasonHandler = catchErrors(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    const request = updateSeasonSchema.parse({
+      ...req.body,
+      seasonId: req.params.seasonId,
+    });
+
+    const { season } = await updateSeason({ ...request, userId: req.userId });
+
+    return res.status(OK).json({ message: `season updated`, season });
+  }
 );
