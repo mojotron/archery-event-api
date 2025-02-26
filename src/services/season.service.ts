@@ -45,10 +45,16 @@ export const getSeasons = async (filter: SeasonFilterType) => {
       ...(filter === "active" && { isFinished: false }),
       ...(filter === "finished" && { isFinished: true }),
     },
-    select: { id: true, title: true, isFinished: true },
+    include: {
+      tournaments: {
+        select: { id: true },
+      },
+    },
   });
 
-  return { seasons };
+  return {
+    seasons: seasons.map((s) => ({ ...s, tournaments: s.tournaments.length })),
+  };
 };
 
 export const getSeasonById = async (seasonId: string) => {

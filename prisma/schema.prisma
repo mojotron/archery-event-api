@@ -79,7 +79,7 @@ model Season {
 }
 
 enum SeasonType {
-  skandinavian_3D
+  scandinavian_3D
 }
 
 model Tournament {

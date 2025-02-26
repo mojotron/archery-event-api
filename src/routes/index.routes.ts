@@ -13,6 +13,6 @@ routes.use("/auth", authRoutes);
 routes.use("/user", authenticate, userRoutes);
 routes.use("/sessions", authenticate, sessionRoutes);
 // protected routes + admin
-routes.use("/admin/season", authenticate, seasonRoutes);
+routes.use("/seasons", authenticate, seasonRoutes);
 
 export default routes;
