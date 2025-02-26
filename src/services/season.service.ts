@@ -58,7 +58,10 @@ export const getSeasons = async (filter: SeasonFilterType) => {
 };
 
 export const getSeasonById = async (seasonId: string) => {
-  const season = await prisma.season.findUnique({ where: { id: seasonId } });
+  const season = await prisma.season.findUnique({
+    where: { id: seasonId },
+    include: { tournaments: true },
+  });
   appAsserts(season, NOT_FOUND, "season not found");
 
   return { season };
