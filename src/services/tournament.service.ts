@@ -21,3 +21,5 @@ export const createTournament = async (data: CreateTournamentParams) => {
   );
   return { tournament: newTournament };
 };
+
+export const getTournament = async (tournamentId: string) => {};

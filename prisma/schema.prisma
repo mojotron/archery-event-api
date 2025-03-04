@@ -93,6 +93,7 @@ model Tournament {
   attendAt    DateTime
   location    String
   organizedBy String
+  isFinished  Boolean  @default(false)
 
   participants ScoreCard[]
 
