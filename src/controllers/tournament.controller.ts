@@ -55,7 +55,10 @@ export const deleteTournamentHandler = catchErrors(
 
 export const updateTournamentHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const request = updateTournamentSchema.parse({ ...req.body });
+    const request = updateTournamentSchema.parse({
+      ...req.body,
+      tournamentId: req.params.tournamentId,
+    });
 
     const { tournament } = await updateTournament({
       ...request,
