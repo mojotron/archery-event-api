@@ -25,6 +25,7 @@ export const createTournament = async (data: CreateTournamentParams) => {
 export const getTournament = async (tournamentId: string) => {
   const tournament = await prisma.tournament.findUnique({
     where: { id: tournamentId },
+    include: { season: { select: { type: true } } },
   });
   appAsserts(tournament, NOT_FOUND, "tournament not found");
   return { tournament };

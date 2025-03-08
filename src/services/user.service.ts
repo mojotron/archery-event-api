@@ -19,3 +19,15 @@ export const getUser = async (userId: string) => {
     },
   };
 };
+
+export const getAllUsers = async () => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+    },
+  });
+
+  return { users };
+};
