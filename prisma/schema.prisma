@@ -31,7 +31,7 @@ model User {
   seasonCreated           Season[]
   tournamentsCreated      Tournament[]
   // score cards
-  scoreCardsScaninavian3D ScoreCardScaninavian3D[]
+  scoreCardsScaninavian3D ScoreCardScandinavian3D[]
 }
 
 enum UserRole {
@@ -109,7 +109,7 @@ model Tournament {
   season   Season @relation(fields: [seasonId], references: [id])
   seasonId String
 
-  scoreCards ScoreCardScaninavian3D[]
+  scoreCards ScoreCardScandinavian3D[]
 }
 
 model LocationCoords {
@@ -121,12 +121,12 @@ model LocationCoords {
 
 // SCORE CARDS
 // scandinavian 3d rules
-model ScoreCardScaninavian3D {
+model ScoreCardScandinavian3D {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  targets TargetScandinavian3D[]
+  targets ScoreScandinavian3D[]
 
   tournament   Tournament @relation(fields: [tournamentId], references: [id])
   tournamentId String
@@ -135,20 +135,18 @@ model ScoreCardScaninavian3D {
   userId String
 }
 
-model TargetScandinavian3D {
-  id    String                  @id @default(uuid())
+model ScoreScandinavian3D {
+  id    String                 @id @default(uuid())
   arrow Int
-  hit   TargetScandinavian3DHit
+  hit   ScoreScandinavian3DHit
 
-  scoreCard   ScoreCardScaninavian3D @relation(fields: [scoreCardId], references: [id])
+  scoreCard   ScoreCardScandinavian3D @relation(fields: [scoreCardId], references: [id])
   scoreCardId String
 }
 
-enum TargetScandinavian3DHit {
+enum ScoreScandinavian3DHit {
   miss
   center
   vital
   body
 }
-
-// 
