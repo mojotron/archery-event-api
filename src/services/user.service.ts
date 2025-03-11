@@ -15,7 +15,6 @@ export const getUser = async (userId: string) => {
       email: user.email,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-      isAdmin: user.role === "admin",
     },
   };
 };

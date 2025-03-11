@@ -7,7 +7,7 @@ import {
   TOO_MANY_REQUESTS,
   UNAUTHORIZED,
 } from "../constants/http.js";
-import { APP_ORIGIN_CLIENT } from "../constants/env.js";
+import { APP_ORIGIN_ADMIN } from "../constants/env.js";
 // throw error if condition false
 import appAsserts from "../utils/appAssert.js";
 // date helpers
@@ -70,7 +70,7 @@ export const createAccount = async ({
     },
   });
   // send email
-  const url = `${APP_ORIGIN_CLIENT}/email/verify/${verification.id}`;
+  const url = `${APP_ORIGIN_ADMIN}/email/verify/${verification.id}`;
   const { error } = await sendMail({
     to: user.email,
     ...getVerifyEmailTemplate(url),
@@ -219,7 +219,7 @@ export const sendPasswordResetEmail = async (email: string) => {
       },
     });
     // send email
-    const url = `${APP_ORIGIN_CLIENT}/password/reset?code=${
+    const url = `${APP_ORIGIN_ADMIN}/password/reset?code=${
       verification.id
     }&expire=${expiresAt.getTime()}`;
 

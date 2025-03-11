@@ -11,7 +11,7 @@ export const getSessionsHandler = catchErrors(
       currentSessionId: req.sessionId,
     });
 
-    return res.status(OK).json({ message: "user sessions", sessions });
+    return res.status(OK).json(sessions);
   }
 );
 

@@ -7,7 +7,7 @@ export const getUserHandler = catchErrors(
   async (req: Request, res: Response) => {
     const { user } = await getUser(req.userId);
 
-    return res.status(OK).json({ message: "user data", user });
+    return res.status(OK).json(user);
   }
 );
 
