@@ -24,13 +24,8 @@ model User {
   password   String
   isVerified Boolean @default(false)
 
-  sessions                Session[]
-  verivicationCodes       VerificationCode[]
-  // admin fields
-  seasonCreated           Season[]
-  tournamentsCreated      Tournament[]
-  // score cards
-  scoreCardsScaninavian3D ScoreCardScandinavian3D[]
+  sessions          Session[]
+  verivicationCodes VerificationCode[]
 }
 
 model Session {
@@ -60,87 +55,137 @@ enum VerivicationCodeType {
   PasswordReset
 }
 
-model Season {
+// MAJOR REFACTOR 
+// ARCHER
+model Archer {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title           String
-  description     String
-  type            SeasonType
-  tournamentCount Int
-  isFinished      Boolean    @default(false)
+  club   Club?   @relation(fields: [clubId], references: [id])
+  clubId String?
 
-  createdBy   User         @relation(fields: [createdById], references: [id])
-  createdById String
-  tournaments Tournament[]
+  firstName String
+  lastName  String
+  username  String
+  email     String? @unique()
+
+  scorecardsScan3D ScoreCardScan3D[]
+  scorecardsWA     ScoreCardWA[]
 }
 
-enum SeasonType {
-  scandinavian_3D
-}
-
-model Tournament {
+// CLUBS
+model Club {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title       String
-  description String?
-  attendAt    DateTime
+  name    String
+  address String
 
-  organizedBy String
-  isFinished  Boolean @default(false)
-
-  location String
-
-  locationCords    LocationCoords? @relation(fields: [locationCoordsId], references: [id])
-  locationCoordsId String?
-
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  season   Season @relation(fields: [seasonId], references: [id])
-  seasonId String
-
-  scoreCards ScoreCardScandinavian3D[]
+  members Archer[]
 }
 
-model LocationCoords {
-  id         String       @id @default(uuid())
-  lonitude   Int
-  latitude   Int
-  Tournament Tournament[]
-}
-
-// SCORE CARDS
-// scandinavian 3d rules
-model ScoreCardScandinavian3D {
+// TARGET SCORES
+// scandinavan score sistem
+model ScoreScan3D {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  targets ScoreScandinavian3D[]
-
-  tournament   Tournament @relation(fields: [tournamentId], references: [id])
-  tournamentId String
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-}
-
-model ScoreScandinavian3D {
-  id    String                 @id @default(uuid())
   arrow Int
-  hit   ScoreScandinavian3DHit
+  hit   S3D_hit
 
-  scoreCard   ScoreCardScandinavian3D @relation(fields: [scoreCardId], references: [id])
+  scoreCard   ScoreCardScan3D @relation(fields: [scoreCardId], references: [id])
   scoreCardId String
+
+  animal   AnimalTarget? @relation(fields: [animalId], references: [id])
+  animalId String?
 }
 
-enum ScoreScandinavian3DHit {
+enum S3D_hit {
   miss
   center
   vital
   body
+}
+
+// TARGET DESCRIPTION
+model AnimalTarget {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  description String
+  distance    Int
+  slope       TargetSlope
+
+  ScoreScan3D ScoreScan3D[]
+}
+
+enum TargetSlope {
+  eyelevel
+  uphill
+  downhill
+}
+
+// world archery target face
+model ScoreWA {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  first  Int
+  second Int
+  third  Int
+  axesX  Int?
+  axesY  Int?
+
+  scoreCard   ScoreCardWA? @relation(fields: [scoreCardId], references: [id])
+  scoreCardId String?
+
+  target   FaceTarget? @relation(fields: [targetId], references: [id])
+  targetId String?
+}
+
+model FaceTarget {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  distance Int
+  ScoreWA  ScoreWA[]
+}
+
+// SCORECARDS - collection of and scores for archer on tournamnet
+model ScoreCardScan3D {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scores ScoreScan3D[]
+
+  archer   Archer @relation(fields: [archerId], references: [id])
+  archerId String
+}
+
+model ScoreCardWA {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scores ScoreWA[]
+
+  archer   Archer @relation(fields: [archerId], references: [id])
+  archerId String
+}
+
+// TOURNAMENTS
+// scandinavian turnament
+model TournamnetScan3D {
+  id String @id @default(uuid())
+}
+
+model TournamentWA {
+  id String @id @default(uuid())
 }

@@ -1,4 +1,4 @@
-import { SeasonType } from "@prisma/client";
+// import { SeasonType } from "@prisma/client";
 import { boolean, z } from "zod";
 
 export const seasonFilterSchema = z
@@ -11,7 +11,7 @@ export const seasonSchema = z.object({
   title: z.string().trim(),
   description: z.string().trim(),
   tournamentCount: z.number(),
-  type: z.nativeEnum(SeasonType),
+  // type: z.nativeEnum(SeasonType),
 });
 
 export const seasonIdSchema = z.string().length(36);
