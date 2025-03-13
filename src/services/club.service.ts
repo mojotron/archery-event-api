@@ -36,8 +36,10 @@ export const deleteClub = async (clubId: string) => {
     include: { members: { select: { id: true } } },
   });
   appAsserts(club, NOT_FOUND, "club not found");
+  console.log("MEMBERS", club.members);
+
   appAsserts(
-    club.members.length > 0,
+    club.members.length === 0,
     CONFLICT,
     "unable to delete club, has members"
   );
