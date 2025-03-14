@@ -1,10 +1,12 @@
 import { z } from "zod";
 
+export const archerIdSchema = z.string().trim().length(36);
+
 export const createArcherSchema = z.object({
   clubId: z.string().trim().length(36),
   firstName: z.string().trim(),
   lastName: z.string().trim(),
-  email: z.string().email().trim(),
+  email: z.string().email().trim().optional(),
   username: z
     .string()
     .trim()

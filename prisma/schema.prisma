@@ -67,8 +67,8 @@ model Archer {
 
   firstName String
   lastName  String
-  username  String  @unique()
-  email     String? @unique()
+  username  String  @unique
+  email     String? @unique
   public    Boolean @default(false)
 
   scorecardsScan3D ScoreCardScan3D[]

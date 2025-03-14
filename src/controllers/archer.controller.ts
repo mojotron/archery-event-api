@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors.js";
-import { createArcherSchema } from "./archer.schema.js";
-import { createArcher, getArcherList } from "../services/archer.service.js";
+import { archerIdSchema, createArcherSchema } from "./archer.schema.js";
+import {
+  createArcher,
+  deleteArcher,
+  getArcher,
+  getArcherList,
+} from "../services/archer.service.js";
 import { CREATED, OK } from "../constants/http.js";
 
 // CREATE
@@ -21,7 +26,11 @@ export const getArcherListHandler = catchErrors(
 );
 
 export const getArcherHandler = catchErrors(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    const archerId = archerIdSchema.parse(req.params.archerId);
+    const { archer } = await getArcher(archerId);
+    return res.status(OK).json(archer);
+  }
 );
 // UPDATE
 export const updateArcherHandler = catchErrors(
@@ -29,5 +38,9 @@ export const updateArcherHandler = catchErrors(
 );
 // DELETE
 export const deleteArcherHandler = catchErrors(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    const archerId = archerIdSchema.parse(req.params.archerId);
+    const { archer } = await deleteArcher(archerId);
+    return res.status(OK).json(archer);
+  }
 );
