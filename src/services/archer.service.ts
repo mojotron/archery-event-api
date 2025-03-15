@@ -67,3 +67,35 @@ export const deleteArcher = async (archerId: string) => {
 
   return { archer: deletedArcher };
 };
+
+type EditArcherParams = {
+  archersId: string;
+  clubId?: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  public?: boolean;
+};
+export const editArcher = async (data: EditArcherParams) => {
+  const archer = await prisma.archer.findUnique({
+    where: { id: data.archersId },
+  });
+  appAsserts(archer, NOT_FOUND, "archer not found");
+  // try to change username
+  if (data.username) {
+    const usernameExists = await prisma.archer.findUnique({
+      where: { username: data.username },
+    });
+    appAsserts(!usernameExists, CONFLICT, "username already in use");
+  }
+  // try to change email
+  if (data.email) {
+    const emailExists = await prisma.archer.findUnique({
+      where: { email: data.email },
+    });
+    appAsserts(!emailExists, CONFLICT, "email already in use");
+  }
+
+  // TODO refactor and UPDATE
+};
