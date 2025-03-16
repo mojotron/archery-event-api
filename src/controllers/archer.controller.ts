@@ -8,6 +8,7 @@ import {
 import {
   createArcher,
   deleteArcher,
+  editArcher,
   getArcher,
   getArcherList,
 } from "../services/archer.service.js";
@@ -43,6 +44,8 @@ export const updateArcherHandler = catchErrors(
       ...req.body,
       archerId: req.params,
     });
+    const { archer } = await editArcher(request);
+    return res.status(OK).json(archer);
   }
 );
 // DELETE

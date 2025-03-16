@@ -39,7 +39,10 @@ export const getArcherList = async () => {
 };
 
 export const getArcher = async (archerId: string) => {
-  const archer = await prisma.archer.findUnique({ where: { id: archerId } });
+  const archer = await prisma.archer.findUnique({
+    where: { id: archerId },
+    include: { club: { select: { name: true } } },
+  });
   appAsserts(archer, NOT_FOUND, "archer not found");
 
   return { archer };
@@ -97,5 +100,17 @@ export const editArcher = async (data: EditArcherParams) => {
     appAsserts(!emailExists, CONFLICT, "email already in use");
   }
 
-  // TODO refactor and UPDATE
+  const updatedArcher = await prisma.archer.update({
+    where: { id: archer.id },
+    data: {
+      ...(data.clubId !== undefined && { clubId: data.clubId }),
+      ...(data.firstName !== undefined && { firstName: data.firstName }),
+      ...(data.lastName !== undefined && { lastName: data.lastName }),
+      ...(data.email !== undefined && { email: data.email }),
+      ...(data.username !== undefined && { username: data.username }),
+      ...(data.public !== undefined && { public: data.public }),
+    },
+  });
+
+  return { archer: updatedArcher };
 };
