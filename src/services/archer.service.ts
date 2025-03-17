@@ -72,7 +72,7 @@ export const deleteArcher = async (archerId: string) => {
 };
 
 type EditArcherParams = {
-  archersId: string;
+  archerId: string;
   clubId?: string;
   firstName?: string;
   lastName?: string;
@@ -82,7 +82,7 @@ type EditArcherParams = {
 };
 export const editArcher = async (data: EditArcherParams) => {
   const archer = await prisma.archer.findUnique({
-    where: { id: data.archersId },
+    where: { id: data.archerId },
   });
   appAsserts(archer, NOT_FOUND, "archer not found");
   // try to change username
@@ -110,6 +110,7 @@ export const editArcher = async (data: EditArcherParams) => {
       ...(data.username !== undefined && { username: data.username }),
       ...(data.public !== undefined && { public: data.public }),
     },
+    include: { club: { select: { name: true } } },
   });
 
   return { archer: updatedArcher };

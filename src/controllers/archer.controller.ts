@@ -42,7 +42,7 @@ export const updateArcherHandler = catchErrors(
   async (req: Request, res: Response) => {
     const request = updateArchersSchema.parse({
       ...req.body,
-      archerId: req.params,
+      archerId: req.params.archerId,
     });
     const { archer } = await editArcher(request);
     return res.status(OK).json(archer);

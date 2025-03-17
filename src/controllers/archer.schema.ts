@@ -26,5 +26,5 @@ export const updateArchersSchema = z.object({
   username: usernameSchema.optional(),
   public: z.boolean().optional(),
   clubId: docIdSchema.optional(),
-  archersId: docIdSchema,
+  archerId: docIdSchema,
 });
