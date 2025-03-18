@@ -84,7 +84,8 @@ model Club {
   name    String
   address String
 
-  members Archer[]
+  members           Archer[]
+  tournamentsScan3D TournamnetScan3D[]
 }
 
 // TARGET SCORES
@@ -168,6 +169,9 @@ model ScoreCardScan3D {
 
   archer   Archer @relation(fields: [archerId], references: [id])
   archerId String
+
+  tournament   TournamnetScan3D? @relation(fields: [tournamentId], references: [id])
+  tournamentId String?
 }
 
 model ScoreCardWA {
@@ -184,9 +188,52 @@ model ScoreCardWA {
 // TOURNAMENTS
 // scandinavian turnament
 model TournamnetScan3D {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  attendAt    DateTime
+  address     String
+  description String
+
+  scoreCards ScoreCardScan3D[]
+
+  club   Club?   @relation(fields: [clubId], references: [id])
+  clubId String?
+
+  season   SeasonScan3D? @relation(fields: [seasonId], references: [id])
+  seasonId String?
 }
 
 model TournamentWA {
-  id String @id @default(uuid())
+  id       String    @id @default(uuid())
+  season   SeasonWA? @relation(fields: [seasonId], references: [id])
+  seasonId String?
+}
+
+// SEASONS
+model SeasonScan3D {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title           String
+  description     String
+  tournamentCount Int
+
+  tournaments TournamnetScan3D[]
+}
+
+model SeasonWA {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title           String
+  description     String
+  tournamentCount Int
+  distance        Int
+
+  tournaments TournamentWA[]
 }
