@@ -1,18 +1,17 @@
-// import { SeasonType } from "@prisma/client";
-import { boolean, z } from "zod";
+import { z } from "zod";
+
+export const createSeasonScan3DSchema = z.object({
+  title: z.string().trim(),
+  description: z.string().trim(),
+  tournamentCount: z.number(),
+  distance: z.number().optional(),
+});
 
 export const seasonFilterSchema = z
   .union([z.literal("all"), z.literal("active"), z.literal("finished")])
   .optional();
 
 export type SeasonFilterType = z.infer<typeof seasonFilterSchema>;
-
-export const seasonSchema = z.object({
-  title: z.string().trim(),
-  description: z.string().trim(),
-  tournamentCount: z.number(),
-  // type: z.nativeEnum(SeasonType),
-});
 
 export const seasonIdSchema = z.string().length(36);
 

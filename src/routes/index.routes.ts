@@ -18,7 +18,7 @@ routes.use("/sessions", authenticate, sessionRoutes);
 //
 routes.use("/clubs", clubRoutes);
 routes.use("/archers", archerRoutes);
-routes.use("/seasons", authenticate, seasonRoutes);
+routes.use("/seasons", seasonRoutes);
 routes.use("/tournaments", authenticate, tournamentRoutes);
 routes.use("/scorecards", authenticate, scorecardRoutes);
 

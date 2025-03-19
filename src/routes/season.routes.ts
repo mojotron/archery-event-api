@@ -1,19 +1,14 @@
 import { Router } from "express";
-import {
-  createSeasonHandler,
-  getSeasonsHandler,
-  getSingleSeasonHandler,
-  deleteSeasonHandler,
-  updateSeasonHandler,
-} from "../controllers/season.controller.js";
+import { createSeasonScan3DHandler } from "../controllers/seasonScan3D.controller.js";
 import isAdmin from "../middlewares/isAdmin.js";
+import authenticate from "../middlewares/authenticate.js";
+
+const scan3D = "scandinavian3D";
 
 const seasonRoutes = Router();
-
-seasonRoutes.get("/", getSeasonsHandler);
-seasonRoutes.get("/:seasonId", getSingleSeasonHandler);
-seasonRoutes.post("/", isAdmin, createSeasonHandler);
-seasonRoutes.delete("/:seasonId", isAdmin, deleteSeasonHandler);
-seasonRoutes.patch("/:seasonId", isAdmin, updateSeasonHandler);
+// refactor
+seasonRoutes.post(`/${scan3D}`, authenticate, createSeasonScan3DHandler);
+seasonRoutes.get(`/${scan3D}`, createSeasonScan3DHandler);
+seasonRoutes.get(`/${scan3D}/:seasonId`, createSeasonScan3DHandler);
 
 export default seasonRoutes;
