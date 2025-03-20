@@ -2,12 +2,15 @@ import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors.js";
 import {
   createSeasonScan3DSchema,
-  seasonFilterSchema,
+  statusFilterSchema,
   seasonIdSchema,
   updateSeasonSchema,
-} from "./seasonScan3D.schema.js";
+} from "./season.schema.js";
 import { OK, CREATED } from "../constants/http.js";
-import { createSeasonScan3D } from "../services/season.service.js";
+import {
+  createSeasonScan3D,
+  getSeasonsScan3D,
+} from "../services/season.service.js";
 
 // CREATE
 export const createSeasonScan3DHandler = catchErrors(
@@ -19,7 +22,11 @@ export const createSeasonScan3DHandler = catchErrors(
 );
 // READ
 export const getSeasonsScan3DHandler = catchErrors(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    const statusFilter = statusFilterSchema.parse(req.query.status);
+    const { seasons } = await getSeasonsScan3D({ statusFilter });
+    return res.status(OK).json(seasons);
+  }
 );
 export const getSeasonScan3DHandler = catchErrors(
   async (req: Request, res: Response) => {}

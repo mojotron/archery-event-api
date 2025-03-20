@@ -196,6 +196,7 @@ model TournamnetScan3D {
   attendAt    DateTime
   address     String
   description String
+  isFinished  Boolean  @default(false)
 
   scoreCards ScoreCardScan3D[]
 
@@ -207,7 +208,9 @@ model TournamnetScan3D {
 }
 
 model TournamentWA {
-  id       String    @id @default(uuid())
+  id         String  @id @default(uuid())
+  isFinished Boolean @default(false)
+
   season   SeasonWA? @relation(fields: [seasonId], references: [id])
   seasonId String?
 }
@@ -221,6 +224,7 @@ model SeasonScan3D {
   title           String
   description     String
   tournamentCount Int
+  isFinished      Boolean @default(false)
 
   tournaments TournamnetScan3D[]
 }
@@ -234,6 +238,7 @@ model SeasonWA {
   description     String
   tournamentCount Int
   distance        Int
+  isFinished      Boolean @default(false)
 
   tournaments TournamentWA[]
 }
