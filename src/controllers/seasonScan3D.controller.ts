@@ -10,7 +10,7 @@ import { OK, CREATED } from "../constants/http.js";
 import {
   createSeasonScan3D,
   getSeasonsScan3D,
-} from "../services/season.service.js";
+} from "../services/seasonScan3D.service.js";
 
 // CREATE
 export const createSeasonScan3DHandler = catchErrors(

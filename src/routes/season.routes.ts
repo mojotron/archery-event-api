@@ -15,5 +15,5 @@ seasonRoutes.post(`/${scan3D}`, authenticate, createSeasonScan3DHandler);
 seasonRoutes.get(`/${scan3D}`, getSeasonsScan3DHandler);
 seasonRoutes.get(`/${scan3D}/:seasonId`, createSeasonScan3DHandler);
 // wa target
-seasonRoutes.post(`/#${wa}`, authenticate, createSeasonWAHandler);
+seasonRoutes.post(`/${wa}`, authenticate, createSeasonWAHandler);
 export default seasonRoutes;
