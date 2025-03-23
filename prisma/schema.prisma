@@ -84,8 +84,8 @@ model Club {
   name    String
   address String
 
-  members           Archer[]
-  tournamentsScan3D TournamnetScan3D[]
+  members     Archer[]
+  tournaments TournamnetInfo[]
 }
 
 // TARGET SCORES
@@ -170,7 +170,7 @@ model ScoreCardScan3D {
   archer   Archer @relation(fields: [archerId], references: [id])
   archerId String
 
-  tournament   TournamnetScan3D? @relation(fields: [tournamentId], references: [id])
+  tournament   Tournamnet3D? @relation(fields: [tournamentId], references: [id])
   tournamentId String?
 }
 
@@ -186,8 +186,7 @@ model ScoreCardWA {
 }
 
 // TOURNAMENTS
-// scandinavian turnament
-model TournamnetScan3D {
+model TournamnetInfo {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -198,25 +197,30 @@ model TournamnetScan3D {
   description String
   isFinished  Boolean  @default(false)
 
+  organizedBy   Club?   @relation(fields: [organizedById], references: [id])
+  organizedById String?
+}
+
+// scandinavian turnament
+model Tournamnet3D {
+  id         String            @id @default(uuid())
+  // score card connection
   scoreCards ScoreCardScan3D[]
-
-  club   Club?   @relation(fields: [clubId], references: [id])
-  clubId String?
-
-  season   SeasonScan3D? @relation(fields: [seasonId], references: [id])
-  seasonId String?
+  // season connection
+  season     Season3D          @relation(fields: [seasonId], references: [id])
+  seasonId   String
 }
 
 model TournamentWA {
-  id         String  @id @default(uuid())
-  isFinished Boolean @default(false)
-
-  season   SeasonWA? @relation(fields: [seasonId], references: [id])
-  seasonId String?
+  id       String   @id @default(uuid())
+  // score card connection
+  // season connectiom
+  season   SeasonWA @relation(fields: [seasonId], references: [id])
+  seasonId String
 }
 
 // SEASONS
-model SeasonScan3D {
+model SeasonInfo {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -226,19 +230,23 @@ model SeasonScan3D {
   tournamentCount Int
   isFinished      Boolean @default(false)
 
-  tournaments TournamnetScan3D[]
+  season3D   Season3D? @relation(fields: [season3DId], references: [id])
+  season3DId String?   @unique
+
+  seasonWA   SeasonWA? @relation(fields: [seasonWAId], references: [id])
+  seasonWAId String?   @unique
+}
+
+model Season3D {
+  id String @id @default(uuid())
+
+  seasonInfo  SeasonInfo?
+  tournaments Tournamnet3D[]
 }
 
 model SeasonWA {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id String @id @default(uuid())
 
-  title           String
-  description     String
-  tournamentCount Int
-  distance        Int
-  isFinished      Boolean @default(false)
-
+  seasonInfo  SeasonInfo?
   tournaments TournamentWA[]
 }
