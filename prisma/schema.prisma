@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// admin - creates and maintain 
 model User {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
@@ -55,8 +56,7 @@ enum VerivicationCodeType {
   PasswordReset
 }
 
-// MAJOR REFACTOR 
-// ARCHER
+// ARCHER  
 model Archer {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
@@ -65,14 +65,13 @@ model Archer {
   club   Club?   @relation(fields: [clubId], references: [id])
   clubId String?
 
-  firstName String
-  lastName  String
-  username  String  @unique
-  email     String? @unique
-  public    Boolean @default(false)
-
-  scorecardsScan3D ScoreCardScan3D[]
-  scorecardsWA     ScoreCardWA[]
+  firstName  String
+  lastName   String
+  username   String      @unique
+  email      String?     @unique
+  public     Boolean     @default(false)
+  // connection to scorecards
+  scorecards ScoreCard[]
 }
 
 // CLUBS
@@ -84,169 +83,184 @@ model Club {
   name    String
   address String
 
+  tournaments Tournamnet[]
   members     Archer[]
-  tournaments TournamnetInfo[]
 }
 
 // TARGET SCORES
 // scandinavan score sistem
-model ScoreScan3D {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model ScoreScan3D {
+//   id        String   @id @default(uuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  arrow Int
-  hit   S3D_hit
+//   arrow Int
+//   hit   S3D_hit
 
-  scoreCard   ScoreCardScan3D @relation(fields: [scoreCardId], references: [id])
-  scoreCardId String
+//   scoreCard   ScoreCardScan3D @relation(fields: [scoreCardId], references: [id])
+//   scoreCardId String
 
-  animal   AnimalTarget? @relation(fields: [animalId], references: [id])
-  animalId String?
-}
+//   animal   AnimalTarget? @relation(fields: [animalId], references: [id])
+//   animalId String?
+// }
 
-enum S3D_hit {
-  miss
-  center
-  vital
-  body
-}
+// enum S3D_hit {
+//   miss
+//   center
+//   vital
+//   body
+// }
 
 // TARGET DESCRIPTION
-model AnimalTarget {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model AnimalTarget {
+//   id        String   @id @default(uuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  description String
-  distance    Int
-  slope       TargetSlope
+//   description String
+//   distance    Int
+//   slope       TargetSlope
 
-  ScoreScan3D ScoreScan3D[]
-}
+//   ScoreScan3D ScoreScan3D[]
+// }
 
-enum TargetSlope {
-  eyelevel
-  uphill
-  downhill
-}
+// enum TargetSlope {
+//   eyelevel
+//   uphill
+//   downhill
+// }
 
 // world archery target face
-model ScoreWA {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model ScoreWA {
+//   id        String   @id @default(uuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  first  Int
-  second Int
-  third  Int
-  axesX  Int?
-  axesY  Int?
+//   first  Int
+//   second Int
+//   third  Int
+//   axesX  Int?
+//   axesY  Int?
 
-  scoreCard   ScoreCardWA? @relation(fields: [scoreCardId], references: [id])
-  scoreCardId String?
+//   scoreCard   ScoreCardWA? @relation(fields: [scoreCardId], references: [id])
+//   scoreCardId String?
 
-  target   FaceTarget? @relation(fields: [targetId], references: [id])
-  targetId String?
-}
+//   target   FaceTarget? @relation(fields: [targetId], references: [id])
+//   targetId String?
+// }
 
-model FaceTarget {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model FaceTarget {
+//   id        String   @id @default(uuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  distance Int
-  ScoreWA  ScoreWA[]
-}
+//   distance Int
+//   ScoreWA  ScoreWA[]
+// }
 
 // SCORECARDS - collection of and scores for archer on tournamnet
-model ScoreCardScan3D {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model ScoreCardScan3D {
+//   id        String   @id @default(uuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  scores ScoreScan3D[]
+//   scores ScoreScan3D[]
 
-  archer   Archer @relation(fields: [archerId], references: [id])
-  archerId String
+//   archer   Archer @relation(fields: [archerId], references: [id])
+//   archerId String
 
-  tournament   Tournamnet3D? @relation(fields: [tournamentId], references: [id])
-  tournamentId String?
+//   tournament   Tournamnet3D? @relation(fields: [tournamentId], references: [id])
+//   tournamentId String?
+// }
+
+// model ScoreCardWA {
+//   id        String   @id @default(uuid())
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   scores ScoreWA[]
+
+//   archer   Archer @relation(fields: [archerId], references: [id])
+//   archerId String
+// }
+
+// SEASONS
+enum RulesType {
+  sacandinavian3D
+  worldArchery
+  worldArchery3D
 }
 
-model ScoreCardWA {
+model Season {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  scores ScoreWA[]
+  rules           RulesType
+  title           String
+  description     String
+  tournamentCount Int
+  isFinished      Boolean   @default(false)
 
-  archer   Archer @relation(fields: [archerId], references: [id])
-  archerId String
+  tournaments Tournamnet[]
 }
 
-// TOURNAMENTS
-model TournamnetInfo {
+// TOURNAMENT
+model Tournamnet {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  rules       RulesType
   title       String
   attendAt    DateTime
   address     String
   description String
-  isFinished  Boolean  @default(false)
+  isFinished  Boolean   @default(false)
 
-  organizedBy   Club?   @relation(fields: [organizedById], references: [id])
+  // connection to club
+  organizedBy   Club?       @relation(fields: [organizedById], references: [id])
   organizedById String?
+  // connection to season
+  season        Season?     @relation(fields: [seasonId], references: [id])
+  seasonId      String?
+  // connection to scorecards
+  scorecards    ScoreCard[]
 }
 
-// scandinavian turnament
-model Tournamnet3D {
-  id         String            @id @default(uuid())
-  // score card connection
-  scoreCards ScoreCardScan3D[]
-  // season connection
-  season     Season3D          @relation(fields: [seasonId], references: [id])
-  seasonId   String
+// SCORECARD
+model ScoreCard {
+  id           String      @id @default(uuid())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  // connection to archer
+  archer       Archer?     @relation(fields: [archerId], references: [id])
+  archerId     String?
+  // connection to tournament
+  tournamnet   Tournamnet? @relation(fields: [tournamnetId], references: [id])
+  tournamnetId String?
+  // conection to a scores
+  scores       Score[]
 }
 
-model TournamentWA {
-  id       String   @id @default(uuid())
-  // score card connection
-  // season connectiom
-  season   SeasonWA @relation(fields: [seasonId], references: [id])
-  seasonId String
+// SCORE (one round of archery shooting or single animal for 3d)
+model Score {
+  id          String     @id @default(uuid())
+  // connection to score card
+  scoreCard   ScoreCard? @relation(fields: [scoreCardId], references: [id])
+  scoreCardId String?
 }
 
-// SEASONS
-model SeasonInfo {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title           String
-  description     String
-  tournamentCount Int
-  isFinished      Boolean @default(false)
-
-  season3D   Season3D? @relation(fields: [season3DId], references: [id])
-  season3DId String?   @unique
-
-  seasonWA   SeasonWA? @relation(fields: [seasonWAId], references: [id])
-  seasonWAId String?   @unique
+// score types atomic
+enum AnimalHit {
+  center
+  vital
+  body
+  miss
 }
 
-model Season3D {
-  id String @id @default(uuid())
-
-  seasonInfo  SeasonInfo?
-  tournaments Tournamnet3D[]
-}
-
-model SeasonWA {
-  id String @id @default(uuid())
-
-  seasonInfo  SeasonInfo?
-  tournaments TournamentWA[]
+model Score3D {
+  id    String    @id @default(uuid())
+  arrow Int
+  hit   AnimalHit
 }
