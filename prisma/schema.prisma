@@ -87,106 +87,9 @@ model Club {
   members     Archer[]
 }
 
-// TARGET SCORES
-// scandinavan score sistem
-// model ScoreScan3D {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   arrow Int
-//   hit   S3D_hit
-
-//   scoreCard   ScoreCardScan3D @relation(fields: [scoreCardId], references: [id])
-//   scoreCardId String
-
-//   animal   AnimalTarget? @relation(fields: [animalId], references: [id])
-//   animalId String?
-// }
-
-// enum S3D_hit {
-//   miss
-//   center
-//   vital
-//   body
-// }
-
-// TARGET DESCRIPTION
-// model AnimalTarget {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   description String
-//   distance    Int
-//   slope       TargetSlope
-
-//   ScoreScan3D ScoreScan3D[]
-// }
-
-// enum TargetSlope {
-//   eyelevel
-//   uphill
-//   downhill
-// }
-
-// world archery target face
-// model ScoreWA {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   first  Int
-//   second Int
-//   third  Int
-//   axesX  Int?
-//   axesY  Int?
-
-//   scoreCard   ScoreCardWA? @relation(fields: [scoreCardId], references: [id])
-//   scoreCardId String?
-
-//   target   FaceTarget? @relation(fields: [targetId], references: [id])
-//   targetId String?
-// }
-
-// model FaceTarget {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   distance Int
-//   ScoreWA  ScoreWA[]
-// }
-
-// SCORECARDS - collection of and scores for archer on tournamnet
-// model ScoreCardScan3D {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   scores ScoreScan3D[]
-
-//   archer   Archer @relation(fields: [archerId], references: [id])
-//   archerId String
-
-//   tournament   Tournamnet3D? @relation(fields: [tournamentId], references: [id])
-//   tournamentId String?
-// }
-
-// model ScoreCardWA {
-//   id        String   @id @default(uuid())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   scores ScoreWA[]
-
-//   archer   Archer @relation(fields: [archerId], references: [id])
-//   archerId String
-// }
-
 // SEASONS
 enum RulesType {
-  sacandinavian3D
+  scandinavian3D
   worldArchery
   worldArchery3D
 }
@@ -249,9 +152,11 @@ model Score {
   // connection to score card
   scoreCard   ScoreCard? @relation(fields: [scoreCardId], references: [id])
   scoreCardId String?
+  // connection type of score
+  score3D     Score3D?
+  scoreWA     ScoreWA?
 }
 
-// score types atomic
 enum AnimalHit {
   center
   vital
@@ -259,8 +164,23 @@ enum AnimalHit {
   miss
 }
 
+// score types atomics
 model Score3D {
-  id    String    @id @default(uuid())
-  arrow Int
-  hit   AnimalHit
+  id      String    @id @default(uuid())
+  arrow   Int
+  hit     AnimalHit
+  // connection to score
+  score   Score     @relation(fields: [scoreId], references: [id])
+  scoreId String    @unique
+}
+
+model ScoreWA {
+  id         String  @id @default(uuid())
+  first      Int
+  second     Int
+  third      Int
+  isBullseye Boolean @default(false)
+  // connection to Score
+  score      Score   @relation(fields: [scoreId], references: [id])
+  scoreId    String  @unique
 }
