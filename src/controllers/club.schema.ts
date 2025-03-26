@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { recordIDSchema } from "./scorecards.schemas";
+import { databaseIdSchema } from "./general.schema";
 
 export const createClubSchema = z.object({
   name: z.string().trim(),
@@ -7,7 +7,7 @@ export const createClubSchema = z.object({
 });
 
 export const editClubSchema = z.object({
-  clubId: recordIDSchema,
+  clubId: databaseIdSchema,
   name: z.string().trim().optional(),
   address: z.string().trim().optional(),
 });

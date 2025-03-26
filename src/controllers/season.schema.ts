@@ -1,13 +1,6 @@
 import { z } from "zod";
-import { RulesType } from "@prisma/client";
-import { recordIDSchema } from "./scorecards.schemas";
-
-const rulesSchema = z.nativeEnum(RulesType);
-
-export enum StatusEnum {
-  active = "active",
-  finished = "finished",
-}
+import { databaseIdSchema, rulesSchema } from "./general.schema";
+import { StatusEnum } from "./general.schema";
 
 export const seasonFilterSchema = z.object({
   rules: rulesSchema.optional(),
@@ -22,7 +15,7 @@ export const createSeasonSchema = z.object({
 });
 
 export const updateSeasonSchema = z.object({
-  seasonId: recordIDSchema,
+  seasonId: databaseIdSchema,
   title: z.string().trim().optional(),
   rules: rulesSchema.optional(),
   description: z.string().trim().optional(),

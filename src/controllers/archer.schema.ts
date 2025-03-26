@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { recordIDSchema } from "./scorecards.schemas";
+import { databaseIdSchema } from "./general.schema";
 
 const usernameSchema = z
   .string()
@@ -10,12 +10,12 @@ const usernameSchema = z
   });
 
 export const archerFilterSchema = z.object({
-  club: recordIDSchema.optional(),
+  club: databaseIdSchema.optional(),
   name: z.string().trim().optional(),
 });
 
 export const createArcherSchema = z.object({
-  clubId: recordIDSchema,
+  clubId: databaseIdSchema,
   firstName: z.string().trim(),
   lastName: z.string().trim(),
   email: z.string().email().trim().optional(),
@@ -28,6 +28,6 @@ export const updateArchersSchema = z.object({
   email: z.string().email().trim().optional(),
   username: usernameSchema.optional(),
   public: z.boolean().optional(),
-  clubId: recordIDSchema.optional(),
-  archerId: recordIDSchema,
+  clubId: databaseIdSchema.optional(),
+  archerId: databaseIdSchema,
 });

@@ -6,7 +6,8 @@ import {
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
 } from "../constants/http.js";
-import { StatusEnum } from "../controllers/season.schema.js";
+import { StatusEnum } from "../controllers/general.schema.js";
+
 // CREATE
 type CreateSeasonParams = {
   rules: RulesType;

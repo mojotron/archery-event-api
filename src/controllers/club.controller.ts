@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors.js";
 import { createClubSchema, editClubSchema } from "./club.schema.js";
-import { recordIDSchema } from "./scorecards.schemas.js";
+import { DatabaseSyncOptions } from "node:sqlite";
 import {
   createClub,
   deleteClub,
@@ -10,6 +10,7 @@ import {
   getClubs,
 } from "../services/club.service.js";
 import { CREATED, OK } from "../constants/http.js";
+import { databaseIdSchema } from "./general.schema.js";
 
 // CREATE
 export const createClubHandler = catchErrors(
@@ -31,7 +32,7 @@ export const getClubListHandler = catchErrors(
 
 export const getClubHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const clubId = recordIDSchema.parse(req.params.clubId);
+    const clubId = databaseIdSchema.parse(req.params.clubId);
     const { club } = await getClub(clubId);
     return res.status(OK).json(club);
   }
@@ -50,7 +51,7 @@ export const updateClubHandler = catchErrors(
 // DELETE
 export const deleteClubHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const clubId = recordIDSchema.parse(req.params.clubId);
+    const clubId = databaseIdSchema.parse(req.params.clubId);
     const { club } = await deleteClub(clubId);
     return res.status(OK).json(club);
   }

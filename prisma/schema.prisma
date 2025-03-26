@@ -83,7 +83,7 @@ model Club {
   name    String
   address String
 
-  tournaments Tournamnet[]
+  tournaments Tournament[]
   members     Archer[]
 }
 
@@ -105,11 +105,11 @@ model Season {
   tournamentCount Int
   isFinished      Boolean   @default(false)
 
-  tournaments Tournamnet[]
+  tournaments Tournament[]
 }
 
 // TOURNAMENT
-model Tournamnet {
+model Tournament {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -140,7 +140,7 @@ model ScoreCard {
   archer       Archer?     @relation(fields: [archerId], references: [id])
   archerId     String?
   // connection to tournament
-  tournamnet   Tournamnet? @relation(fields: [tournamnetId], references: [id])
+  tournamnet   Tournament? @relation(fields: [tournamnetId], references: [id])
   tournamnetId String?
   // conection to a scores
   scores       Score[]

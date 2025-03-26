@@ -5,7 +5,7 @@ import {
   createArcherSchema,
   updateArchersSchema,
 } from "./archer.schema.js";
-import { recordIDSchema } from "./scorecards.schemas.js";
+import { databaseIdSchema } from "./general.schema.js";
 import {
   createArcher,
   deleteArcher,
@@ -37,7 +37,7 @@ export const getArcherListHandler = catchErrors(
 
 export const getArcherHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const archerId = recordIDSchema.parse(req.params.archerId);
+    const archerId = databaseIdSchema.parse(req.params.archerId);
     const { archer } = await getArcher(archerId);
     return res.status(OK).json(archer);
   }
@@ -56,7 +56,7 @@ export const updateArcherHandler = catchErrors(
 // DELETE
 export const deleteArcherHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const archerId = recordIDSchema.parse(req.params.archerId);
+    const archerId = databaseIdSchema.parse(req.params.archerId);
     const { archer } = await deleteArcher(archerId);
     return res.status(OK).json(archer);
   }

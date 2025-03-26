@@ -1,17 +1,23 @@
 import { Router } from "express";
-import isAdmin from "../middlewares/isAdmin.js";
 import {
   createTournamentHandler,
-  getSingleTournamentHandler,
+  getTournamentListHandler,
+  getTournamentHandler,
   deleteTournamentHandler,
   updateTournamentHandler,
 } from "../controllers/tournament.controller.js";
+import authenticate from "../middlewares/authenticate.js";
 
 const tournamentRoutes = Router();
 
-tournamentRoutes.post("/", isAdmin, createTournamentHandler);
-tournamentRoutes.get("/:tournamentId", getSingleTournamentHandler);
-tournamentRoutes.delete("/:tournamentId", isAdmin, deleteTournamentHandler);
-tournamentRoutes.patch("/:tournamentId", isAdmin, updateTournamentHandler);
+tournamentRoutes.post("/", authenticate, createTournamentHandler);
+tournamentRoutes.get("/", getTournamentListHandler);
+tournamentRoutes.get("/:tournamentId", getTournamentHandler);
+tournamentRoutes.delete(
+  "/:tournamentId",
+  authenticate,
+  deleteTournamentHandler
+);
+tournamentRoutes.patch("/:tournamentId", authenticate, updateTournamentHandler);
 
 export default tournamentRoutes;

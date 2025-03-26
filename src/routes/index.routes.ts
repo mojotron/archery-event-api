@@ -19,7 +19,7 @@ routes.use("/sessions", authenticate, sessionRoutes);
 routes.use("/clubs", clubRoutes);
 routes.use("/archers", archerRoutes);
 routes.use("/seasons", seasonRoutes);
-routes.use("/tournaments", authenticate, tournamentRoutes);
-routes.use("/scorecards", authenticate, scorecardRoutes);
+routes.use("/tournaments", tournamentRoutes);
+routes.use("/scorecards", scorecardRoutes);
 
 export default routes;

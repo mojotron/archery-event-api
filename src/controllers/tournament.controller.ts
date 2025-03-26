@@ -3,56 +3,52 @@ import catchErrors from "../utils/catchErrors.js";
 import { OK } from "../constants/http.js";
 import {
   createTournamentSchema,
-  tournamentIdSchema,
+  filterTournamentSchema,
   updateTournamentSchema,
 } from "./tournament.schema.js";
+import { databaseIdSchema } from "./general.schema.js";
 import {
   createTournament,
   deleteTournament,
   getTournament,
+  getTournamentList,
   updateTournament,
 } from "../services/tournament.service.js";
 import { CREATED } from "../constants/http.js";
 
+// CREATE
 export const createTournamentHandler = catchErrors(
   async (req: Request, res: Response) => {
     const request = createTournamentSchema.parse({ ...req.body });
+    const { tournament } = await createTournament(request);
+    return res.status(CREATED).json(tournament);
+  }
+);
 
-    const { tournament } = await createTournament({
-      ...request,
-      createdById: req.userId,
+// READ
+export const getTournamentListHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const { season, club, status } = filterTournamentSchema.parse({
+      ...req.query,
     });
-
-    return res
-      .status(CREATED)
-      .json({ message: "new tournament created", tournament });
+    const { tournaments } = await getTournamentList({
+      seasonFilter: season,
+      clubFilter: club,
+      statusFilter: status,
+    });
+    return res.status(OK).json(tournaments);
   }
 );
 
-export const getSingleTournamentHandler = catchErrors(
+export const getTournamentHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const tournamentId = tournamentIdSchema.parse(req.params.tournamentId);
-
+    const tournamentId = databaseIdSchema.parse(req.params.tournamentId);
     const { tournament } = await getTournament(tournamentId);
-
-    return res
-      .status(OK)
-      .json({ message: `get single tournament`, tournament });
+    return res.status(OK).json(tournament);
   }
 );
 
-export const deleteTournamentHandler = catchErrors(
-  async (req: Request, res: Response) => {
-    const tournamentId = tournamentIdSchema.parse(req.params.tournamentId);
-
-    const { tournament } = await deleteTournament(tournamentId, req.userId);
-
-    return res
-      .status(OK)
-      .json({ message: "tournament deleted successful", tournament });
-  }
-);
-
+// UPDATE
 export const updateTournamentHandler = catchErrors(
   async (req: Request, res: Response) => {
     const request = updateTournamentSchema.parse({
@@ -60,13 +56,17 @@ export const updateTournamentHandler = catchErrors(
       tournamentId: req.params.tournamentId,
     });
 
-    const { tournament } = await updateTournament({
-      ...request,
-      createdById: req.userId,
-    });
+    const { tournament } = await updateTournament(request);
 
-    return res
-      .status(OK)
-      .json({ message: "tournament update successful", tournament });
+    return res.status(OK).json(tournament);
+  }
+);
+
+// DELETE
+export const deleteTournamentHandler = catchErrors(
+  async (req: Request, res: Response) => {
+    const tournamentId = databaseIdSchema.parse(req.params.tournamentId);
+    const { tournament } = await deleteTournament(tournamentId);
+    return res.status(OK).json(tournament);
   }
 );

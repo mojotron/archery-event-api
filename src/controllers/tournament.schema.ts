@@ -1,21 +1,30 @@
 import { z } from "zod";
-
-export const tournamentIdSchema = z.string().trim().length(36);
+import { StatusEnum, databaseIdSchema, rulesSchema } from "./general.schema.js";
 
 export const createTournamentSchema = z.object({
-  seasonId: z.string().trim().length(36),
-  attendAt: z.string().trim().datetime(),
+  seasonId: databaseIdSchema.optional(),
+  organizedById: databaseIdSchema.optional(),
+  rules: rulesSchema,
   title: z.string().trim(),
-  description: z.string().trim().optional(),
-  location: z.string().trim(),
-  organizedBy: z.string().trim(),
+  description: z.string().trim(),
+  attendAt: z.string().trim().datetime(),
+  address: z.string().trim(),
+});
+
+export const filterTournamentSchema = z.object({
+  season: databaseIdSchema.optional(),
+  club: databaseIdSchema.optional(),
+  status: z.nativeEnum(StatusEnum).optional(),
 });
 
 export const updateTournamentSchema = z.object({
+  tournamentId: databaseIdSchema,
+  seasonId: databaseIdSchema.optional(),
+  organizedById: databaseIdSchema.optional(),
+  rules: rulesSchema.optional(),
   title: z.string().trim().optional(),
   description: z.string().trim().optional(),
-  location: z.string().trim().optional(),
   attendAt: z.string().trim().datetime().optional(),
+  address: z.string().trim().optional(),
   isFinished: z.boolean().optional(),
-  tournamentId: z.string().trim().length(36),
 });

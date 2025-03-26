@@ -1,7 +1,5 @@
 import { z } from "zod";
-// import { ScoreScandinavian3DHit } from "@prisma/client";
-
-export const recordIDSchema = z.string().trim().length(36);
+import { databaseIdSchema } from "./general.schema";
 
 export const scandinavian3DTargetSchema = z.object({
   arrow: z.number(),
@@ -9,7 +7,7 @@ export const scandinavian3DTargetSchema = z.object({
 });
 
 export const scandinavian3DScorecardSchema = z.object({
-  userId: recordIDSchema,
-  tournamentId: recordIDSchema,
+  userId: databaseIdSchema,
+  tournamentId: databaseIdSchema,
   targets: z.array(scandinavian3DTargetSchema).length(28),
 });
