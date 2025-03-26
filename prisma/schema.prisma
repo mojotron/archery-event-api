@@ -62,8 +62,8 @@ model Archer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  club   Club?   @relation(fields: [clubId], references: [id])
-  clubId String?
+  club   Club   @relation(fields: [clubId], references: [id])
+  clubId String
 
   firstName  String
   lastName   String

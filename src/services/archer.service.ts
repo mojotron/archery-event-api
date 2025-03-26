@@ -7,6 +7,7 @@ import {
 import appAsserts from "../utils/appAssert.js";
 
 type CreateArcherParams = {
+  clubId: string;
   firstName: string;
   lastName: string;
   username: string;
@@ -41,7 +42,7 @@ export const getArcherList = async () => {
 export const getArcher = async (archerId: string) => {
   const archer = await prisma.archer.findUnique({
     where: { id: archerId },
-    include: { club: { select: { name: true } } },
+    include: { club: true },
   });
   appAsserts(archer, NOT_FOUND, "archer not found");
 
@@ -51,17 +52,17 @@ export const getArcher = async (archerId: string) => {
 export const deleteArcher = async (archerId: string) => {
   const archer = await prisma.archer.findUnique({
     where: { id: archerId },
-    include: {
-      scorecardsScan3D: { select: { id: true } },
-      scorecardsWA: { select: { id: true } },
-    },
+    // include: {
+    //   scorecardsScan3D: { select: { id: true } },
+    //   scorecardsWA: { select: { id: true } },
+    // },
   });
   appAsserts(archer, NOT_FOUND, "archer not found");
-  appAsserts(
-    archer.scorecardsScan3D.length === 0 || archer.scorecardsWA.length === 0,
-    CONFLICT,
-    "archer has scorecards"
-  );
+  // appAsserts(
+  //   archer.scorecardsScan3D.length === 0 || archer.scorecardsWA.length === 0,
+  //   CONFLICT,
+  //   "archer has scorecards"
+  // );
 
   const deletedArcher = await prisma.archer.delete({
     where: { id: archer.id },

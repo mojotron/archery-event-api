@@ -1,7 +1,11 @@
 import { RulesType } from "@prisma/client";
 import prisma from "../config/prisma.js";
 import appAsserts from "../utils/appAssert.js";
-import { INTERNAL_SERVER_ERROR, NOT_FOUND } from "../constants/http.js";
+import {
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+} from "../constants/http.js";
 import { StatusEnum } from "../controllers/season.schema.js";
 // CREATE
 type CreateSeasonParams = {
@@ -75,8 +79,16 @@ export const updateSeason = async (data: UpdateSeasonParams) => {
 
 // DELETE
 export const deleteSeason = async (seasonId: string) => {
-  const season = await prisma.season.findUnique({ where: { id: seasonId } });
+  const season = await prisma.season.findUnique({
+    where: { id: seasonId },
+    include: { _count: { select: { tournaments: true } } },
+  });
   appAsserts(season, NOT_FOUND, "season not found");
+  appAsserts(
+    season._count.tournaments === 0,
+    BAD_REQUEST,
+    "can't delete season with tournaments"
+  );
 
   const deletedSeason = await prisma.season.delete({
     where: { id: season.id },

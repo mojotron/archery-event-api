@@ -45,6 +45,7 @@ export const deleteClub = async (clubId: string) => {
   );
 
   const deletedClub = await prisma.club.delete({ where: { id: club.id } });
+  appAsserts(deletedClub, INTERNAL_SERVER_ERROR, "failed to delete club");
 
   return { club: deletedClub };
 };
@@ -65,6 +66,7 @@ export const editClub = async ({ clubId, name, address }: EditClubProps) => {
       ...(address !== undefined && { address }),
     },
   });
+  appAsserts(updatedClub, INTERNAL_SERVER_ERROR, "failed to update club");
 
   return { club: updatedClub };
 };

@@ -1,7 +1,5 @@
 import { z } from "zod";
-
-const docIdSchema = z.string().trim().length(36);
-export const archerIdSchema = docIdSchema;
+import { recordIDSchema } from "./scorecards.schemas";
 
 const usernameSchema = z
   .string()
@@ -12,7 +10,7 @@ const usernameSchema = z
   });
 
 export const createArcherSchema = z.object({
-  clubId: docIdSchema,
+  clubId: recordIDSchema,
   firstName: z.string().trim(),
   lastName: z.string().trim(),
   email: z.string().email().trim().optional(),
@@ -25,6 +23,6 @@ export const updateArchersSchema = z.object({
   email: z.string().email().trim().optional(),
   username: usernameSchema.optional(),
   public: z.boolean().optional(),
-  clubId: docIdSchema.optional(),
-  archerId: docIdSchema,
+  clubId: recordIDSchema.optional(),
+  archerId: recordIDSchema,
 });

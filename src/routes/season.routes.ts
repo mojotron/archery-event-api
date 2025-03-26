@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createSeasonHandler,
+  deleteSeasonHandler,
   getSeasonHandler,
   getSeasonListHandler,
   updateSeasonHandler,
@@ -12,7 +13,7 @@ const seasonRoutes = Router();
 seasonRoutes.post("/", authenticate, createSeasonHandler);
 seasonRoutes.get("/", getSeasonListHandler);
 seasonRoutes.get("/:seasonId", getSeasonHandler);
-seasonRoutes.delete("/:seasonId", authenticate, getSeasonHandler);
+seasonRoutes.delete("/:seasonId", authenticate, deleteSeasonHandler);
 seasonRoutes.patch("/:seasonId", authenticate, updateSeasonHandler);
 
 export default seasonRoutes;

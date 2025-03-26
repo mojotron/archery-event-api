@@ -13,7 +13,7 @@ const archerRoutes = Router();
 archerRoutes.post("/", authenticate, createArcherHandler);
 archerRoutes.get("/", getArcherListHandler);
 archerRoutes.get("/:archerId", getArcherHandler);
-archerRoutes.patch("/:archerId", updateArcherHandler);
-archerRoutes.delete("/:archerId", deleteArcherHandler);
+archerRoutes.patch("/:archerId", authenticate, updateArcherHandler);
+archerRoutes.delete("/:archerId", authenticate, deleteArcherHandler);
 
 export default archerRoutes;

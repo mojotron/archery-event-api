@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors.js";
-import {
-  clubIdSchema,
-  createClubSchema,
-  editClubSchema,
-} from "./club.schema.js";
+import { createClubSchema, editClubSchema } from "./club.schema.js";
+import { recordIDSchema } from "./scorecards.schemas.js";
 import {
   createClub,
   deleteClub,
@@ -34,7 +31,7 @@ export const getClubListHandler = catchErrors(
 
 export const getClubHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const clubId = clubIdSchema.parse(req.params.clubId);
+    const clubId = recordIDSchema.parse(req.params.clubId);
     const { club } = await getClub(clubId);
     return res.status(OK).json(club);
   }
@@ -53,7 +50,7 @@ export const updateClubHandler = catchErrors(
 // DELETE
 export const deleteClubHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const clubId = clubIdSchema.parse(req.params.clubId);
+    const clubId = recordIDSchema.parse(req.params.clubId);
     const { club } = await deleteClub(clubId);
     return res.status(OK).json(club);
   }
