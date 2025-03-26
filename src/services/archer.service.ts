@@ -34,15 +34,34 @@ export const createArcher = async (data: CreateArcherParams) => {
   return { archer };
 };
 
-export const getArcherList = async () => {
-  const archers = await prisma.archer.findMany();
+type GetArchersParams = {
+  clubFilter?: string;
+  nameFilter?: string;
+};
+export const getArcherList = async ({
+  clubFilter = undefined,
+  nameFilter = undefined,
+}: GetArchersParams) => {
+  const archers = await prisma.archer.findMany({
+    where: {
+      ...(clubFilter && { clubId: clubFilter }),
+      ...(nameFilter && {
+        OR: [
+          { firstName: { startsWith: nameFilter } },
+          { lastName: { startsWith: nameFilter } },
+          { username: { startsWith: nameFilter } },
+        ],
+      }),
+    },
+    include: { club: { select: { id: true, name: true } } },
+  });
   return { archers };
 };
 
 export const getArcher = async (archerId: string) => {
   const archer = await prisma.archer.findUnique({
     where: { id: archerId },
-    include: { club: true },
+    include: { club: { select: { id: true, name: true } } },
   });
   appAsserts(archer, NOT_FOUND, "archer not found");
 
@@ -52,17 +71,10 @@ export const getArcher = async (archerId: string) => {
 export const deleteArcher = async (archerId: string) => {
   const archer = await prisma.archer.findUnique({
     where: { id: archerId },
-    // include: {
-    //   scorecardsScan3D: { select: { id: true } },
-    //   scorecardsWA: { select: { id: true } },
-    // },
+    include: { _count: { select: { scorecards: true } } },
   });
   appAsserts(archer, NOT_FOUND, "archer not found");
-  // appAsserts(
-  //   archer.scorecardsScan3D.length === 0 || archer.scorecardsWA.length === 0,
-  //   CONFLICT,
-  //   "archer has scorecards"
-  // );
+  appAsserts(archer._count.scorecards === 0, CONFLICT, "archer has scorecards");
 
   const deletedArcher = await prisma.archer.delete({
     where: { id: archer.id },
@@ -111,7 +123,7 @@ export const editArcher = async (data: EditArcherParams) => {
       ...(data.username !== undefined && { username: data.username }),
       ...(data.public !== undefined && { public: data.public }),
     },
-    include: { club: { select: { name: true } } },
+    include: { club: { select: { name: true, id: true } } },
   });
 
   return { archer: updatedArcher };

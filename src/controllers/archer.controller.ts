@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import catchErrors from "../utils/catchErrors.js";
-import { createArcherSchema, updateArchersSchema } from "./archer.schema.js";
+import {
+  archerFilterSchema,
+  createArcherSchema,
+  updateArchersSchema,
+} from "./archer.schema.js";
 import { recordIDSchema } from "./scorecards.schemas.js";
 import {
   createArcher,
@@ -22,7 +26,11 @@ export const createArcherHandler = catchErrors(
 // READ
 export const getArcherListHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const { archers } = await getArcherList();
+    const { club, name } = archerFilterSchema.parse({ ...req.query });
+    const { archers } = await getArcherList({
+      clubFilter: club,
+      nameFilter: name,
+    });
     return res.status(OK).json(archers);
   }
 );

@@ -9,6 +9,11 @@ const usernameSchema = z
     path: ["username"],
   });
 
+export const archerFilterSchema = z.object({
+  club: recordIDSchema.optional(),
+  name: z.string().trim().optional(),
+});
+
 export const createArcherSchema = z.object({
   clubId: recordIDSchema,
   firstName: z.string().trim(),
