@@ -1,13 +1,27 @@
 import { z } from "zod";
-import { databaseIdSchema } from "./general.schema";
+import {
+  animalHitSchema,
+  databaseIdSchema,
+  rulesSchema,
+} from "./general.schema";
 
-export const scandinavian3DTargetSchema = z.object({
-  arrow: z.number(),
-  // hit: z.nativeEnum(ScoreScandinavian3DHit),
+const score3DSchema = z.object({
+  arrow: z.number().min(1).max(3),
+  hit: animalHitSchema,
+});
+const arrowWASchema = z.number().min(1).max(10);
+
+const scoreWAschema = z.object({
+  first: arrowWASchema,
+  second: arrowWASchema,
+  third: arrowWASchema,
+  isBullseye: z.boolean(),
 });
 
-export const scandinavian3DScorecardSchema = z.object({
-  userId: databaseIdSchema,
+export const createScoreCardSchema = z.object({
+  archerId: databaseIdSchema,
   tournamentId: databaseIdSchema,
-  targets: z.array(scandinavian3DTargetSchema).length(28),
+  rules: rulesSchema,
+  score3DList: z.array(score3DSchema).optional(),
+  scoreWAList: z.array(scoreWAschema).optional(),
 });

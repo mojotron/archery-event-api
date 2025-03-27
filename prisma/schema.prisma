@@ -120,6 +120,7 @@ model Tournament {
   address     String
   description String
   isFinished  Boolean   @default(false)
+  rounds      Int       @default(20) // for dynamic scorring if there is not time for full tournament
 
   // connection to club
   organizedBy   Club?       @relation(fields: [organizedById], references: [id])
@@ -136,26 +137,19 @@ model ScoreCard {
   id           String      @id @default(uuid())
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
+  rules        RulesType
   // connection to archer
   archer       Archer?     @relation(fields: [archerId], references: [id])
   archerId     String?
   // connection to tournament
-  tournamnet   Tournament? @relation(fields: [tournamnetId], references: [id])
-  tournamnetId String?
+  tournament   Tournament? @relation(fields: [tournamentId], references: [id])
+  tournamentId String?
   // conection to a scores
-  scores       Score[]
+  scores3D     Score3D[]
+  scoresWA     ScoreWA[]
 }
 
 // SCORE (one round of archery shooting or single animal for 3d)
-model Score {
-  id          String     @id @default(uuid())
-  // connection to score card
-  scoreCard   ScoreCard? @relation(fields: [scoreCardId], references: [id])
-  scoreCardId String?
-  // connection type of score
-  score3D     Score3D?
-  scoreWA     ScoreWA?
-}
 
 enum AnimalHit {
   center
@@ -166,21 +160,21 @@ enum AnimalHit {
 
 // score types atomics
 model Score3D {
-  id      String    @id @default(uuid())
-  arrow   Int
-  hit     AnimalHit
+  id          String    @id @default(uuid())
+  arrow       Int
+  hit         AnimalHit
   // connection to score
-  score   Score     @relation(fields: [scoreId], references: [id])
-  scoreId String    @unique
+  scoreCard   ScoreCard @relation(fields: [scoreCardId], references: [id])
+  scoreCardId String
 }
 
 model ScoreWA {
-  id         String  @id @default(uuid())
-  first      Int
-  second     Int
-  third      Int
-  isBullseye Boolean @default(false)
+  id          String    @id @default(uuid())
+  first       Int
+  second      Int
+  third       Int
+  isBullseye  Boolean   @default(false)
   // connection to Score
-  score      Score   @relation(fields: [scoreId], references: [id])
-  scoreId    String  @unique
+  scoreCard   ScoreCard @relation(fields: [scoreCardId], references: [id])
+  scoreCardId String
 }

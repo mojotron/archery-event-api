@@ -9,6 +9,7 @@ export const createTournamentSchema = z.object({
   description: z.string().trim(),
   attendAt: z.string().trim().datetime(),
   address: z.string().trim(),
+  rounds: z.number(),
 });
 
 export const filterTournamentSchema = z.object({
@@ -27,4 +28,5 @@ export const updateTournamentSchema = z.object({
   attendAt: z.string().trim().datetime().optional(),
   address: z.string().trim().optional(),
   isFinished: z.boolean().optional(),
+  rounds: z.number().optional(),
 });

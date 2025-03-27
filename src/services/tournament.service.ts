@@ -17,6 +17,7 @@ type CreateTournamentParams = {
   attendAt: string;
   description: string;
   address: string;
+  rounds: number;
 };
 export const createTournament = async (data: CreateTournamentParams) => {
   const tournament = await prisma.tournament.create({ data: { ...data } });
@@ -68,6 +69,7 @@ type UpdateTournamentTypes = {
   attendAt?: string;
   address?: string;
   isFinished?: boolean;
+  rounds?: number;
 };
 export const updateTournament = async (data: UpdateTournamentTypes) => {
   const tournament = await prisma.tournament.findUnique({
@@ -86,6 +88,7 @@ export const updateTournament = async (data: UpdateTournamentTypes) => {
       ...(tournament.isFinished && { isFinished: data.isFinished }),
       ...(tournament.seasonId && { seasonId: data.seasonId }),
       ...(tournament.organizedById && { organizedById: data.organizedById }),
+      ...(tournament.rounds && { rounds: data.rounds }),
     },
   });
   appAsserts(
