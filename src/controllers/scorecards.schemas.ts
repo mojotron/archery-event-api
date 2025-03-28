@@ -18,10 +18,21 @@ const scoreWAschema = z.object({
   isBullseye: z.boolean(),
 });
 
-export const createScoreCardSchema = z.object({
+export const createScorecardSchema = z.object({
   archerId: databaseIdSchema,
   tournamentId: databaseIdSchema,
   rules: rulesSchema,
   score3DList: z.array(score3DSchema).optional(),
   scoreWAList: z.array(scoreWAschema).optional(),
+});
+
+export const getScorecardListSchema = z.object({
+  rules: rulesSchema,
+  tournament: databaseIdSchema.optional(),
+  archer: databaseIdSchema.optional(),
+});
+
+export const getScorecardSchema = z.object({
+  rules: rulesSchema,
+  scorecardId: databaseIdSchema,
 });

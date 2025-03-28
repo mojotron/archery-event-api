@@ -71,7 +71,7 @@ model Archer {
   email      String?     @unique
   public     Boolean     @default(false)
   // connection to scorecards
-  scorecards ScoreCard[]
+  scorecards Scorecard[]
 }
 
 // CLUBS
@@ -129,11 +129,11 @@ model Tournament {
   season        Season?     @relation(fields: [seasonId], references: [id])
   seasonId      String?
   // connection to scorecards
-  scorecards    ScoreCard[]
+  scorecards    Scorecard[]
 }
 
 // SCORECARD
-model ScoreCard {
+model Scorecard {
   id           String      @id @default(uuid())
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -164,8 +164,8 @@ model Score3D {
   arrow       Int
   hit         AnimalHit
   // connection to score
-  scoreCard   ScoreCard @relation(fields: [scoreCardId], references: [id])
-  scoreCardId String
+  scorecard   Scorecard @relation(fields: [scorecardId], references: [id])
+  scorecardId String
 }
 
 model ScoreWA {
@@ -175,6 +175,6 @@ model ScoreWA {
   third       Int
   isBullseye  Boolean   @default(false)
   // connection to Score
-  scoreCard   ScoreCard @relation(fields: [scoreCardId], references: [id])
-  scoreCardId String
+  scoreCard   Scorecard @relation(fields: [scorecardId], references: [id])
+  scorecardId String
 }
