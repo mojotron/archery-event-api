@@ -37,12 +37,16 @@ export const getSeasonList = async ({
       ...(statusFilter === "finished" && { isFinished: true }),
       ...(rulesFilter && { rules: rulesFilter }),
     },
+    include: { tournaments: { select: { title: true, id: true } } },
   });
   return { seasons };
 };
 
 export const getSeason = async (seasonId: string) => {
-  const season = await prisma.season.findUnique({ where: { id: seasonId } });
+  const season = await prisma.season.findUnique({
+    where: { id: seasonId },
+    include: { tournaments: { select: { title: true, id: true } } },
+  });
   appAsserts(season, NOT_FOUND, "season not found");
 
   return { season };
