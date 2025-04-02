@@ -16,7 +16,10 @@ type CreateSeasonParams = {
   tournamentCount: number;
 };
 export const createSeason = async (data: CreateSeasonParams) => {
-  const season = await prisma.season.create({ data });
+  const season = await prisma.season.create({
+    data,
+    include: { tournaments: true },
+  });
   appAsserts(season, INTERNAL_SERVER_ERROR, "failed to create new season");
 
   return { season };
@@ -37,7 +40,9 @@ export const getSeasonList = async ({
       ...(statusFilter === "finished" && { isFinished: true }),
       ...(rulesFilter && { rules: rulesFilter }),
     },
-    include: { tournaments: { select: { title: true, id: true } } },
+    include: {
+      tournaments: { select: { title: true, id: true, attendAt: true } },
+    },
   });
   return { seasons };
 };
@@ -45,7 +50,9 @@ export const getSeasonList = async ({
 export const getSeason = async (seasonId: string) => {
   const season = await prisma.season.findUnique({
     where: { id: seasonId },
-    include: { tournaments: { select: { title: true, id: true } } },
+    include: {
+      tournaments: { select: { title: true, id: true, attendAt: true } },
+    },
   });
   appAsserts(season, NOT_FOUND, "season not found");
 
