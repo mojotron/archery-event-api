@@ -83,6 +83,9 @@ export const updateSeason = async (data: UpdateSeasonParams) => {
       ...(data.tournamentCount && { tournamentCount: data.tournamentCount }),
       ...(data.isFinished && { isFinished: data.isFinished }),
     },
+    include: {
+      tournaments: { select: { title: true, id: true, attendAt: true } },
+    },
   });
   appAsserts(updatedSeason, INTERNAL_SERVER_ERROR, "failed to update season");
 

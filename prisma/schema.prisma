@@ -147,11 +147,19 @@ model Scorecard {
   // conection to a scores
   scores3D     Score3D[]
   scoresWA     ScoreWA[]
+  scoresWA3D   ScoreWA3D[]
 }
 
 // SCORE (one round of archery shooting or single animal for 3d)
-
 enum AnimalHit {
+  center
+  vital
+  body
+  miss
+}
+
+enum AnimalHitWA {
+  bullseye
   center
   vital
   body
@@ -173,8 +181,16 @@ model ScoreWA {
   first       Int
   second      Int
   third       Int
-  isBullseye  Boolean   @default(false)
   // connection to Score
-  scoreCard   Scorecard @relation(fields: [scorecardId], references: [id])
+  scorecard   Scorecard @relation(fields: [scorecardId], references: [id])
+  scorecardId String
+}
+
+model ScoreWA3D {
+  id          String      @id @default(uuid())
+  first       AnimalHitWA
+  second      AnimalHitWA
+  // connection to Score
+  scorecard   Scorecard   @relation(fields: [scorecardId], references: [id])
   scorecardId String
 }

@@ -20,7 +20,10 @@ type CreateTournamentParams = {
   rounds: number;
 };
 export const createTournament = async (data: CreateTournamentParams) => {
-  const tournament = await prisma.tournament.create({ data: { ...data } });
+  const tournament = await prisma.tournament.create({
+    data: { ...data },
+    include: { organizedBy: { select: { id: true, name: true } } },
+  });
   appAsserts(
     tournament,
     INTERNAL_SERVER_ERROR,
@@ -46,6 +49,7 @@ export const getTournamentList = async ({
       ...(clubFilter && { organizedById: clubFilter }),
       ...(statusFilter === "finished" && { isFinished: true }),
     },
+    include: { organizedBy: { select: { id: true, name: true } } },
   });
   return { tournaments };
 };
@@ -53,6 +57,7 @@ export const getTournamentList = async ({
 export const getTournament = async (tournamentId: string) => {
   const tournament = await prisma.tournament.findUnique({
     where: { id: tournamentId },
+    include: { organizedBy: { select: { id: true, name: true } } },
   });
   appAsserts(tournament, NOT_FOUND, "tournament not found");
   return { tournament };
@@ -80,16 +85,17 @@ export const updateTournament = async (data: UpdateTournamentTypes) => {
   const updatedTournament = await prisma.tournament.update({
     where: { id: tournament.id },
     data: {
-      ...(tournament.rules && { rules: data.rules }),
-      ...(tournament.attendAt && { attendAt: data.attendAt }),
-      ...(tournament.title && { title: data.title }),
-      ...(tournament.description && { description: data.description }),
-      ...(tournament.address && { address: data.address }),
-      ...(tournament.isFinished && { isFinished: data.isFinished }),
-      ...(tournament.seasonId && { seasonId: data.seasonId }),
-      ...(tournament.organizedById && { organizedById: data.organizedById }),
-      ...(tournament.rounds && { rounds: data.rounds }),
+      ...(data.rules && { rules: data.rules }),
+      ...(data.attendAt && { attendAt: data.attendAt }),
+      ...(data.title && { title: data.title }),
+      ...(data.description && { description: data.description }),
+      ...(data.address && { address: data.address }),
+      ...(data.isFinished && { isFinished: data.isFinished }),
+      ...(data.seasonId && { seasonId: data.seasonId }),
+      ...(data.organizedById && { organizedById: data.organizedById }),
+      ...(data.rounds && { rounds: data.rounds }),
     },
+    include: { organizedBy: { select: { id: true, name: true } } },
   });
   appAsserts(
     updatedTournament,
@@ -115,6 +121,7 @@ export const deleteTournament = async (tournamentId: string) => {
 
   const deletedTournament = await prisma.tournament.delete({
     where: { id: tournament.id },
+    include: { organizedBy: { select: { id: true, name: true } } },
   });
   appAsserts(
     deletedTournament,
