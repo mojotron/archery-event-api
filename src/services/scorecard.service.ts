@@ -1,4 +1,4 @@
-import { AnimalHit, RulesType } from "@prisma/client";
+import { AnimalHit, AnimalHitWA, RulesType } from "@prisma/client";
 import prisma from "../config/prisma.js";
 import appAsserts from "../utils/appAssert.js";
 import { INTERNAL_SERVER_ERROR, NOT_FOUND } from "../constants/http.js";
@@ -13,7 +13,11 @@ type ScoreWA = {
   first: number;
   second: number;
   third: number;
-  isBullseye: boolean;
+};
+
+type ScoreWA3D = {
+  first: AnimalHitWA;
+  second: AnimalHitWA;
 };
 
 type CreateScorecardParams = {
@@ -22,6 +26,7 @@ type CreateScorecardParams = {
   rules: RulesType;
   score3DList?: Score3D[];
   scoreWAList?: ScoreWA[];
+  scoreWA3DList?: ScoreWA3D[];
 };
 
 export const createScorecard = async ({
@@ -30,6 +35,7 @@ export const createScorecard = async ({
   rules,
   score3DList = undefined,
   scoreWAList = undefined,
+  scoreWA3DList = undefined,
 }: CreateScorecardParams) => {
   const scorecard = await prisma.scorecard.create({
     data: {
@@ -47,6 +53,10 @@ export const createScorecard = async ({
       ...(rules === RulesType.worldArchery &&
         scoreWAList !== undefined && {
           scoresWA: { createMany: { data: scoreWAList } },
+        }),
+      ...(rules === RulesType.worldArchery3D &&
+        scoreWA3DList !== undefined && {
+          scoresWA3D: { createMany: { data: scoreWA3DList } },
         }),
     },
   });
@@ -81,7 +91,6 @@ export const getScorecardList = async ({
             first: true,
             second: true,
             third: true,
-            isBullseye: true,
             id: true,
           },
         },
@@ -109,7 +118,6 @@ export const getScorecard = async ({ scorecardId, rules }: ScorecardParams) => {
             first: true,
             second: true,
             third: true,
-            isBullseye: true,
             id: true,
           },
         },
