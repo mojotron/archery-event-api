@@ -24,7 +24,10 @@ export const getClubs = async () => {
 };
 
 export const getClub = async (clubId: string) => {
-  const club = await prisma.club.findUnique({ where: { id: clubId } });
+  const club = await prisma.club.findUnique({
+    where: { id: clubId },
+    include: { tournaments: true },
+  });
   appAsserts(club, NOT_FOUND, "club not found");
 
   return { club };

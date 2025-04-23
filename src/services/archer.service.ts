@@ -61,7 +61,22 @@ export const getArcherList = async ({
 export const getArcher = async (archerId: string) => {
   const archer = await prisma.archer.findUnique({
     where: { id: archerId },
-    include: { club: { select: { id: true, name: true } } },
+    include: {
+      club: { select: { id: true, name: true } },
+      scorecards: {
+        select: {
+          id: true,
+          rules: true,
+          tournament: {
+            select: {
+              id: true,
+              title: true,
+              season: { select: { id: true, title: true } },
+            },
+          },
+        },
+      },
+    },
   });
   appAsserts(archer, NOT_FOUND, "archer not found");
 
