@@ -37,17 +37,20 @@ type GetTournamentsParams = {
   seasonFilter?: string;
   clubFilter?: string;
   statusFilter?: StatusEnum;
+  rulesFilter?: RulesType;
 };
 export const getTournamentList = async ({
   seasonFilter = undefined,
   clubFilter = undefined,
   statusFilter = undefined,
+  rulesFilter = undefined,
 }: GetTournamentsParams) => {
   const tournaments = await prisma.tournament.findMany({
     where: {
       ...(seasonFilter && { seasonId: seasonFilter }),
       ...(clubFilter && { organizedById: clubFilter }),
       ...(statusFilter === "finished" && { isFinished: true }),
+      ...(rulesFilter && { rules: rulesFilter }),
     },
     include: { organizedBy: { select: { id: true, name: true } } },
   });

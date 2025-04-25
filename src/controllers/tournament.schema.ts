@@ -13,6 +13,7 @@ export const createTournamentSchema = z.object({
 });
 
 export const filterTournamentSchema = z.object({
+  rules: rulesSchema.optional(),
   season: databaseIdSchema.optional(),
   club: databaseIdSchema.optional(),
   status: z.nativeEnum(StatusEnum).optional(),

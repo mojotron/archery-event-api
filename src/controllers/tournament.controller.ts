@@ -28,13 +28,14 @@ export const createTournamentHandler = catchErrors(
 // READ
 export const getTournamentListHandler = catchErrors(
   async (req: Request, res: Response) => {
-    const { season, club, status } = filterTournamentSchema.parse({
+    const { season, club, status, rules } = filterTournamentSchema.parse({
       ...req.query,
     });
     const { tournaments } = await getTournamentList({
       seasonFilter: season,
       clubFilter: club,
       statusFilter: status,
+      rulesFilter: rules,
     });
     return res.status(OK).json(tournaments);
   }
